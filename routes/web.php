@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LeadController;
+use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\SeoController;
 use App\Http\Middleware\SetLocale;
 use App\Support\Locales;
@@ -38,4 +39,25 @@ Route::prefix('{locale}')
             ->name('lead.store');
 
         Route::get('/gracias', [LeadController::class, 'thanks'])->name('lead.thanks');
+
+        /*
+        | Orçamento do cliente.
+        |
+        | Sem login: o token de 64 caracteres na URL é a credencial. Obrigar
+        | uma mãe a criar conta para ver um orçamento é a melhor forma de o
+        | perder. Em troca o token nunca aparece em listagens nem em JSON, e
+        | as ações que mudam estado são POST com CSRF.
+        */
+        Route::prefix('presupuesto/{token}')
+            ->whereAlphaNumeric('token')
+            ->group(function () {
+                Route::get('/', [QuoteController::class, 'show'])->name('quote.show');
+                Route::get('/pagado', [QuoteController::class, 'paid'])->name('quote.paid');
+
+                Route::middleware('throttle:20,1')->group(function () {
+                    Route::post('/aceptar', [QuoteController::class, 'accept'])->name('quote.accept');
+                    Route::post('/rechazar', [QuoteController::class, 'reject'])->name('quote.reject');
+                    Route::post('/pagar', [QuoteController::class, 'pay'])->name('quote.pay');
+                });
+            });
     });

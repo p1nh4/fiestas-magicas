@@ -35,4 +35,17 @@ return [
         ],
     ],
 
+    /*
+     * Stripe.
+     *
+     * Enquanto estiver vazio, o PaymentServiceProvider usa a passarela
+     * falsa: o fluxo de pagamento pode ser percorrido e testado sem conta
+     * e sem tocar em dinheiro. Ver app/Support/Payments/.
+     */
+    'stripe' => [
+        'key' => env('STRIPE_KEY'),
+        'secret' => env('STRIPE_SECRET'),
+        'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
+    ],
+
 ];
