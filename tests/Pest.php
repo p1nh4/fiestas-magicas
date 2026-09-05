@@ -19,6 +19,23 @@ pest()->extend(TestCase::class)
     ->in('Feature');
 
 /*
+ * Os testes nao dependem de assets compilados.
+ *
+ * Sem isto, o @vite do layout procura o manifesto do build; se ninguem
+ * correu "npm run build" nem tem o "npm run dev" ligado, a pagina rebenta
+ * e os testes passam a inspecionar o ecra de erro do Laravel em vez do
+ * site. Foi exatamente o que aconteceu: quatro testes a falhar com
+ * <html lang="en"> — o ecra de erro — e um deles a queixar-se de um "★"
+ * que vinha do proprio ecra de erro, nao do site.
+ *
+ * withoutVite() troca as tags por vazio. O que se esta a testar aqui e o
+ * HTML que o Blade produz, nao o pipeline do Vite.
+ */
+pest()->beforeEach(function () {
+    $this->withoutVite();
+})->in('Feature');
+
+/*
 |--------------------------------------------------------------------------
 | Expectations
 |--------------------------------------------------------------------------

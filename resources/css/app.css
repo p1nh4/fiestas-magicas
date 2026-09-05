@@ -3,7 +3,158 @@
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 
+/* ==========================================================================
+   Tokens da marca DecorArte
+   Tirados do logótipo real: rosa blush, dourado e branco quente.
+   Definidos aqui e em mais lado nenhum — nas views usa-se bg-rosa,
+   text-oro, font-display, e nunca um hexadecimal à solta.
+   ========================================================================== */
+
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    /* --- superfícies --- */
+    --color-ground: #fdf7f5;
+    --color-surface: #ffffff;
+    --color-surface-2: #f8edeb;
+
+    /* --- texto --- */
+    --color-ink: #2e2126;
+    --color-ink-2: #5c4a50;
+    --color-muted: #8a7378;
+
+    /* --- linhas --- */
+    --color-line: #eddfdc;
+    --color-line-2: #e0ccc8;
+
+    /* --- rosa da marca ---
+       O rosa do logótipo é claro demais para texto: em #E9B7C3 sobre branco
+       o contraste fica em 1.7:1, muito abaixo do mínimo de 4.5:1 das WCAG.
+       Por isso o rosa claro fica para superfícies e este, escurecido, para
+       texto e botões. */
+    --color-rosa: #c96f86;
+    --color-rosa-deep: #a9536a;
+    --color-rosa-soft: #f4dbe1;
+    --color-rosa-wash: #fcf1f3;
+
+    /* --- dourado --- */
+    --color-oro: #a8823c;
+    --color-oro-soft: #ebd9b4;
+    --color-oro-wash: #faf3e6;
+
+    /* --- verde do WhatsApp ---
+       Único sítio onde entra outra cor. É o botão que mais converte neste
+       setor e as pessoas reconhecem-no pela cor. */
+    --color-whatsapp: #3f7d63;
+
+    /* --- tipografia --- */
+    --font-sans: 'Figtree', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-display: 'Marcellus', 'Iowan Old Style', Georgia, serif;
+    --font-script: 'Pinyon Script', 'Snell Roundhand', cursive;
+
+    /* --- escala de tipos ---
+       clamp() em vez de breakpoints: o tamanho acompanha a largura em vez
+       de saltar em degraus. */
+    --text-step--1: clamp(0.79rem, 0.77rem + 0.08vw, 0.84rem);
+    --text-step-0: clamp(1rem, 0.98rem + 0.12vw, 1.06rem);
+    --text-step-1: clamp(1.12rem, 1.06rem + 0.3vw, 1.32rem);
+    --text-step-2: clamp(1.4rem, 1.24rem + 0.8vw, 2rem);
+    --text-step-3: clamp(1.85rem, 1.5rem + 1.7vw, 3rem);
+    --text-step-4: clamp(2.3rem, 1.7rem + 3vw, 4.4rem);
+
+    --radius-card: 10px;
+
+    --shadow-soft: 0 1px 2px rgb(46 33 38 / 0.05), 0 14px 34px -20px rgb(46 33 38 / 0.35);
+    --shadow-lift: 0 3px 8px rgb(46 33 38 / 0.08), 0 26px 56px -26px rgb(46 33 38 / 0.5);
+
+    --ease-out-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        html {
+            scroll-behavior: auto;
+        }
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+
+    body {
+        background-color: var(--color-ground);
+        color: var(--color-ink);
+        font-family: var(--font-sans);
+        font-size: var(--text-step-0);
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    h1,
+    h2,
+    h3 {
+        font-family: var(--font-display);
+        font-weight: 400;
+        line-height: 1.1;
+        text-wrap: balance;
+    }
+
+    /* Foco sempre visível. Quem navega por teclado tem de ver onde está. */
+    :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+        outline: 2px solid var(--color-rosa);
+        outline-offset: 3px;
+        border-radius: 2px;
+    }
+
+    /* O site é claro de propósito. Nenhum dos sites do setor tem modo
+       escuro, e uma marca de decoração de festas em fundo preto não passa
+       a mensagem certa. Isto impede que o navegador force o inverso. */
+    :root {
+        color-scheme: light;
+    }
+}
+
+/* ==========================================================================
+   Utilitários próprios
+   ========================================================================== */
+
+@utility kicker {
+    font-size: var(--text-step--1);
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-oro);
+}
+
+/* Marcador de conteúdo por confirmar com a Sol. Fica visível de propósito:
+   um valor por preencher tem de dar nas vistas, não passar por real. */
+@utility todo-mark {
+    border-bottom: 1.5px dotted var(--color-oro);
+    cursor: help;
+}
+
+/* Salta para o conteúdo — só aparece com o teclado. */
+@utility skip-link {
+    position: absolute;
+    left: 0.5rem;
+    top: -3rem;
+    z-index: 100;
+    background: var(--color-surface);
+    color: var(--color-ink);
+    padding: 0.6rem 1rem;
+    border-radius: 4px;
+    box-shadow: var(--shadow-lift);
+    transition: top 0.2s var(--ease-out-soft);
+
+    &:focus {
+        top: 0.5rem;
+    }
 }

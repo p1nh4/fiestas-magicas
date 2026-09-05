@@ -73,6 +73,10 @@ jobs:
         env:
           PGPASSWORD: fiestas
 
+      - name: Estrutura das views e traduções
+        run: |
+          python3 tools/check_blade.py .
+
       - name: Pint (estilo)
         run: ./vendor/bin/pint --test
 
