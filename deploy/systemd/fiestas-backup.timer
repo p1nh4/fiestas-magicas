@@ -1,0 +1,11 @@
+[Unit]
+Description=Fiestas — cópia de segurança às 4 da manhã
+
+[Timer]
+OnCalendar=*-*-* 04:00:00
+# Se a máquina estiver desligada à hora marcada, corre assim que ligar.
+Persistent=true
+RandomizedDelaySec=300
+
+[Install]
+WantedBy=timers.target

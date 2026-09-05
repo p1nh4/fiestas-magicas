@@ -1,0 +1,113 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+
+# Um job cancela o anterior do mesmo ramo: não vale a pena gastar minutos a
+# testar um commit que já foi substituído.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: fiestas
+          POSTGRES_PASSWORD: fiestas
+          POSTGRES_DB: fiestas_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_DATABASE: fiestas_test
+      DB_USERNAME: fiestas
+      DB_PASSWORD: fiestas
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          # bcmath não é opcional: é com ele que se somam os totais dos
+          # orçamentos. Sem ele os testes de dinheiro falham — e é bom que
+          # falhem, em vez de somarem em vírgula flutuante.
+          extensions: pgsql, bcmath, mbstring, intl, zip, gd
+          coverage: none
+
+      - name: Cache do composer
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/composer/files
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
+
+      - run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Preparar o ambiente
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Extensões do Postgres
+        # O btree_gist é o que sustenta o índice GiST das reservas. Tem de
+        # ser criado por um superutilizador, antes das migrações.
+        run: |
+          PGPASSWORD=fiestas psql -h 127.0.0.1 -U fiestas -d fiestas_test \
+            -c 'CREATE EXTENSION IF NOT EXISTS btree_gist;' \
+            -c 'CREATE EXTENSION IF NOT EXISTS pgcrypto;'
+
+      - run: php artisan migrate --force
+
+      - name: Testes de regras de negócio (SQL puro)
+        # Correm contra o Postgres a sério, sem o Laravel pelo meio. É aqui
+        # que se prova que o trigger do stock recusa mesmo o que tem de
+        # recusar — o PHP pode ter bugs, a base de dados é a última palavra.
+        run: |
+          PGPASSWORD=fiestas psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U fiestas \
+            -d fiestas_test -f database/schema/tests.sql
+
+      - run: ./vendor/bin/pest --colors=always
+
+  analise:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pgsql, bcmath, mbstring, intl, zip, gd
+          coverage: none
+      - run: composer install --prefer-dist --no-interaction --no-progress
+      - run: cp .env.example .env && php artisan key:generate
+
+      - name: Nomes de classe e constantes
+        run: php tools/check_imports.php
+
+      - name: PHPStan
+        run: ./vendor/bin/phpstan analyse --no-progress

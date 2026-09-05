@@ -1,0 +1,9 @@
+# Copiar para /etc/sudoers.d/fiestas-deploy  (chmod 440, chown root:root)
+# e confirmar com:  visudo -c
+#
+# O utilizador `deploy` não é administrador da máquina. Só precisa de
+# mexer em dois serviços, e é só isso que aqui está — cada linha
+# acrescentada é poder que alguém ganha se lhe apanhar a conta.
+
+deploy ALL=(root) NOPASSWD: /usr/bin/systemctl restart php8.4-fpm
+deploy ALL=(root) NOPASSWD: /usr/bin/systemctl restart fiestas-queue.service

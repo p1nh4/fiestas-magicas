@@ -1,0 +1,8 @@
+[Unit]
+Description=Fiestas — atualizar os intervalos de IP da Cloudflare
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/update-cloudflare-ips.sh

@@ -1,0 +1,28 @@
+[Unit]
+Description=Fiestas — fila de trabalhos
+After=network.target postgresql.service
+Requires=postgresql.service
+
+[Service]
+Type=simple
+User=deploy
+Group=www-data
+WorkingDirectory=/var/www/fiestas
+
+# --max-time=3600 faz o processo morrer de hora a hora e o systemd volta a
+# arrancá-lo. Um worker de PHP a viver dias acumula memoria e, pior, fica
+# com o codigo antigo carregado depois de um deploy.
+ExecStart=/usr/bin/php artisan queue:work --sleep=3 --tries=3 --max-time=3600 --backoff=10
+
+Restart=always
+RestartSec=5
+
+# A fila nao precisa de escrever em mais lado nenhum do que a aplicacao.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/var/www/fiestas/storage /var/www/fiestas/bootstrap/cache
+
+[Install]
+WantedBy=multi-user.target

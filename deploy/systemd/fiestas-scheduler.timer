@@ -1,0 +1,10 @@
+[Unit]
+Description=Fiestas — correr o agendador a cada minuto
+
+[Timer]
+OnCalendar=*:0/1
+AccuracySec=10s
+Persistent=false
+
+[Install]
+WantedBy=timers.target
