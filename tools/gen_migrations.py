@@ -18,6 +18,7 @@ PLAN = [
     (['reservations'],  '2026_01_01_000400_create_reservations_table.php'),
     (['billing'],       '2026_01_01_000500_create_billing_tables.php'),
     (['content'],       '2026_01_01_000600_create_content_tables.php'),
+    (['local_seo'],     '2026_02_01_000100_create_service_areas_table.php'),
 ]
 
 

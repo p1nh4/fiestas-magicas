@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\AreaController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\QuoteController;
@@ -39,6 +40,21 @@ Route::prefix('{locale}')
             ->name('lead.store');
 
         Route::get('/gracias', [LeadController::class, 'thanks'])->name('lead.thanks');
+
+        /*
+        | Zonas de trabalho.
+        |
+        | Ninguém escreve "decoración de fiestas" no Google — escreve
+        | "decoración de globos en Nigrán". É para essas buscas que estas
+        | páginas existem.
+        |
+        | O endereço muda com o idioma (o slug está guardado por idioma),
+        | por isso a resolução é feita no controlador e não por binding
+        | automático: o mesmo concelho tem três URLs, uma por mercado, e
+        | cada uma tem de responder no seu.
+        */
+        Route::get('/zonas', [AreaController::class, 'index'])->name('areas.index');
+        Route::get('/zonas/{slug}', [AreaController::class, 'show'])->name('areas.show');
 
         /*
         | Orçamento do cliente.

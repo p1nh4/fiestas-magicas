@@ -40,6 +40,14 @@ trait EditsTranslations
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
+        // Na pagina de CRIACAO ainda nao ha registo — o Filament chama este
+        // metodo na mesma, para encher o formulario com os valores por
+        // omissao. Sem esta guarda, criar um servico rebentava com
+        // "call to a member function on null", e so ali: editar funcionava.
+        if (! isset($this->record)) {
+            return $data;
+        }
+
         foreach ($this->translatableFields() as $field) {
             $data[$field] = $this->record->getTranslations($field);
         }

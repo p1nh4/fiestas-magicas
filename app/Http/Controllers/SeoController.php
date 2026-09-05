@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\ServiceArea;
 use App\Support\Locales;
 use Illuminate\Http\Response;
 
@@ -13,12 +14,57 @@ final class SeoController extends Controller
      * Sitemap com as três versões de cada página e as ligações hreflang
      * entre elas. Sem isto, o Google trata as versões em galego e português
      * como conteúdo duplicado do espanhol.
+     *
+     * Nota sobre a forma: cada entrada é um mapa idioma => URL, e não uma
+     * rota com o idioma trocado. Nas páginas de zona o endereço muda mesmo
+     * entre idiomas (o slug está guardado por idioma), e a primeira versão
+     * disto — que assumia a mesma rota com outro prefixo — teria escrito
+     * hreflangs a apontar para páginas inexistentes.
      */
     public function sitemap(): Response
     {
-        $pages = [
-            ['route' => 'home', 'changefreq' => 'weekly', 'priority' => '1.0'],
+        $entries = [];
+
+        // Home.
+        $entries[] = [
+            'urls' => $this->urlsFor('home'),
+            'changefreq' => 'weekly',
+            'priority' => '1.0',
         ];
+
+        // Lista de zonas.
+        $entries[] = [
+            'urls' => $this->urlsFor('areas.index'),
+            'changefreq' => 'monthly',
+            'priority' => '0.7',
+        ];
+
+        // Uma entrada por zona publicada. As que estão em rascunho não
+        // entram: não têm página, e anunciá-las no sitemap seria mandar o
+        // Google a um 404.
+        foreach (ServiceArea::query()->published()->get() as $area) {
+            $urls = [];
+            foreach (Locales::SUPPORTED as $locale) {
+                $slug = $area->getTranslation('slug', $locale, false);
+
+                // Uma zona sem endereço num idioma simplesmente não existe
+                // nesse idioma. Melhor faltar do que apontar para o vazio.
+                if (blank($slug)) {
+                    continue;
+                }
+
+                $urls[$locale] = route('areas.show', ['locale' => $locale, 'slug' => $slug]);
+            }
+
+            if ($urls !== []) {
+                $entries[] = [
+                    'urls' => $urls,
+                    'changefreq' => 'monthly',
+                    'priority' => '0.8',
+                    'lastmod' => $area->updated_at?->toAtomString(),
+                ];
+            }
+        }
 
         $xml = new \XMLWriter();
         $xml->openMemory();
@@ -27,25 +73,30 @@ final class SeoController extends Controller
         $xml->writeAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
         $xml->writeAttribute('xmlns:xhtml', 'http://www.w3.org/1999/xhtml');
 
-        foreach ($pages as $page) {
-            foreach (Locales::SUPPORTED as $locale) {
+        foreach ($entries as $entry) {
+            foreach ($entry['urls'] as $url) {
                 $xml->startElement('url');
-                $xml->writeElement('loc', route($page['route'], ['locale' => $locale]));
-                $xml->writeElement('changefreq', $page['changefreq']);
-                $xml->writeElement('priority', $page['priority']);
+                $xml->writeElement('loc', $url);
 
-                foreach (Locales::SUPPORTED as $alternate) {
+                if (! empty($entry['lastmod'])) {
+                    $xml->writeElement('lastmod', $entry['lastmod']);
+                }
+
+                $xml->writeElement('changefreq', $entry['changefreq']);
+                $xml->writeElement('priority', $entry['priority']);
+
+                foreach ($entry['urls'] as $alternate => $alternateUrl) {
                     $xml->startElement('xhtml:link');
                     $xml->writeAttribute('rel', 'alternate');
                     $xml->writeAttribute('hreflang', Locales::hreflang($alternate));
-                    $xml->writeAttribute('href', route($page['route'], ['locale' => $alternate]));
+                    $xml->writeAttribute('href', $alternateUrl);
                     $xml->endElement();
                 }
 
                 $xml->startElement('xhtml:link');
                 $xml->writeAttribute('rel', 'alternate');
                 $xml->writeAttribute('hreflang', 'x-default');
-                $xml->writeAttribute('href', route($page['route'], ['locale' => Locales::DEFAULT]));
+                $xml->writeAttribute('href', $entry['urls'][Locales::DEFAULT] ?? reset($entry['urls']));
                 $xml->endElement();
 
                 $xml->endElement();
@@ -71,5 +122,20 @@ final class SeoController extends Controller
         return response(implode("\n", $lines)."\n", 200, [
             'Content-Type' => 'text/plain; charset=utf-8',
         ]);
+    }
+
+    /**
+     * O mesmo caminho nos três idiomas, para rotas sem parâmetros próprios.
+     *
+     * @return array<string, string>
+     */
+    private function urlsFor(string $route): array
+    {
+        $out = [];
+        foreach (Locales::SUPPORTED as $locale) {
+            $out[$locale] = route($route, ['locale' => $locale]);
+        }
+
+        return $out;
     }
 }

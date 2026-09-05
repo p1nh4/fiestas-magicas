@@ -220,6 +220,50 @@ $$, 'I5 · reembolso com valor negativo é aceite');
 --  Resultado
 -- =============================================================================
 
+
+-- ---------------------------------------------------------------- zonas (SEO local)
+-- A regra que protege o site: uma zona sem texto próprio NÃO se publica.
+-- Onze páginas iguais com o nome do sítio trocado são doorway pages, e o
+-- Google desvaloriza o domínio todo por causa delas. Se este bloco falhar,
+-- alguém tornou possível publicá-las a partir do backoffice.
+
+SELECT t_ok($$
+    INSERT INTO service_areas (name, slug, province, country, distance_km, position)
+    VALUES ('Nigrán', '{"es":"nigran","gl":"nigran","pt":"nigran"}', 'Pontevedra', 'ES', 7.5, 1)
+$$, 'Z1 aceita uma zona em rascunho, sem texto');
+
+SELECT t_fails($$
+    UPDATE service_areas SET is_published = true WHERE name = 'Nigrán'
+$$, 'Z2 recusa publicar uma zona sem texto próprio');
+
+SELECT t_fails($$
+    UPDATE service_areas
+       SET intro = '{"es":"Decoramos fiestas en Nigrán."}'::jsonb, is_published = true
+     WHERE name = 'Nigrán'
+$$, 'Z3 recusa publicar com uma frase de encher');
+
+SELECT t_ok($$
+    UPDATE service_areas
+       SET intro = jsonb_build_object('es', repeat('Texto propio de la zona. ', 12)),
+           is_published = true
+     WHERE name = 'Nigrán'
+$$, 'Z4 aceita publicar quando há texto a sério');
+
+SELECT t_fails($$
+    INSERT INTO service_areas (name, slug)
+    VALUES ('Gondomar', '{"es":"nigran","gl":"gondomar","pt":"gondomar"}')
+$$, 'Z5 recusa duas zonas com o mesmo endereço');
+
+SELECT t_fails($$
+    INSERT INTO service_areas (name, slug, country)
+    VALUES ('Braga', '{"es":"braga","gl":"braga","pt":"braga"}', 'FR')
+$$, 'Z6 recusa um país fora de ES/PT');
+
+SELECT t_ok($$
+    INSERT INTO service_areas (name, slug, country, distance_km)
+    VALUES ('Viana do Castelo', '{"es":"viana-do-castelo","gl":"viana-do-castelo","pt":"viana-do-castelo"}', 'PT', 55.0)
+$$, 'Z7 aceita uma zona no norte de Portugal');
+
 \echo ''
 \echo '================= RESULTADO ================='
 SELECT rpad(label, 62, ' ') AS teste,
