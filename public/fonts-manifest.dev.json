@@ -1,0 +1,185 @@
+{
+  "version": 1,
+  "style": {
+    "inline": "@font-face {\n  font-family: \"Figtree\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/6f491e9b0d899954.woff2\") format(\"woff2\");\n  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;\n}\n\n@font-face {\n  font-family: \"Figtree\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/dd7622796dcc1f3c.woff\") format(\"woff\");\n  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;\n}\n\n@font-face {\n  font-family: \"Figtree\";\n  font-style: normal;\n  font-weight: 500;\n  font-display: swap;\n  src: url(\"http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/1451213eef4d501d.woff2\") format(\"woff2\");\n  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;\n}\n\n@font-face {\n  font-family: \"Figtree\";\n  font-style: normal;\n  font-weight: 500;\n  font-display: swap;\n  src: url(\"http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/d3adf07d8377e9a6.woff\") format(\"woff\");\n  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;\n}\n\n@font-face {\n  font-family: \"Figtree\";\n  font-style: normal;\n  font-weight: 600;\n  font-display: swap;\n  src: url(\"http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/099bfc9e5a80a5ee.woff2\") format(\"woff2\");\n  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;\n}\n\n@font-face {\n  font-family: \"Figtree\";\n  font-style: normal;\n  font-weight: 600;\n  font-display: swap;\n  src: url(\"http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/3a2ed891ff74d561.woff\") format(\"woff\");\n  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;\n}\n\n@font-face {\n  font-family: \"Figtree\";\n  font-style: normal;\n  font-weight: 700;\n  font-display: swap;\n  src: url(\"http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/0a89493224e6989c.woff2\") format(\"woff2\");\n  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;\n}\n\n@font-face {\n  font-family: \"Figtree\";\n  font-style: normal;\n  font-weight: 700;\n  font-display: swap;\n  src: url(\"http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/997a1fdd31b6e397.woff\") format(\"woff\");\n  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;\n}\n\n@font-face {\n  font-family: \"Figtree fallback\";\n  src: local(\"Arial\");\n  ascent-override: 93.39%;\n  descent-override: 24.58%;\n  line-gap-override: 0.00%;\n  size-adjust: 101.72%;\n}\n\n@font-face {\n  font-family: \"Marcellus\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/1106fbcb15526abb.woff2\") format(\"woff2\");\n  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;\n}\n\n@font-face {\n  font-family: \"Marcellus\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/f585963444fa8ede.woff\") format(\"woff\");\n  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;\n}\n\n@font-face {\n  font-family: \"Marcellus fallback\";\n  src: local(\"Arial\");\n  ascent-override: 94.08%;\n  descent-override: 27.02%;\n  line-gap-override: 0.00%;\n  size-adjust: 103.54%;\n}\n\n@font-face {\n  font-family: \"Pinyon Script\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/85cbc93526f179fc.woff2\") format(\"woff2\");\n  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;\n}\n\n@font-face {\n  font-family: \"Pinyon Script\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/f2b0ba2e03b23192.woff\") format(\"woff\");\n  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;\n}\n\n@font-face {\n  font-family: \"Pinyon Script fallback\";\n  src: local(\"Arial\");\n  ascent-override: 106.76%;\n  descent-override: 47.52%;\n  line-gap-override: 0.00%;\n  size-adjust: 80.86%;\n}\n\n:root {\n  --font-figtree: \"Figtree\", \"Figtree fallback\";\n  --font-marcellus: \"Marcellus\", \"Marcellus fallback\";\n  --font-pinyon-script: \"Pinyon Script\", \"Pinyon Script fallback\";\n}\n\n.font-figtree {\n  font-family: var(--font-figtree);\n}\n\n.font-marcellus {\n  font-family: var(--font-marcellus);\n}\n\n.font-pinyon-script {\n  font-family: var(--font-pinyon-script);\n}\n",
+    "familyStyles": {
+      "figtree": "@font-face {\n  font-family: \"Figtree\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/6f491e9b0d899954.woff2\") format(\"woff2\");\n  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;\n}\n\n@font-face {\n  font-family: \"Figtree\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/dd7622796dcc1f3c.woff\") format(\"woff\");\n  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;\n}\n\n@font-face {\n  font-family: \"Figtree\";\n  font-style: normal;\n  font-weight: 500;\n  font-display: swap;\n  src: url(\"http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/1451213eef4d501d.woff2\") format(\"woff2\");\n  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;\n}\n\n@font-face {\n  font-family: \"Figtree\";\n  font-style: normal;\n  font-weight: 500;\n  font-display: swap;\n  src: url(\"http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/d3adf07d8377e9a6.woff\") format(\"woff\");\n  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;\n}\n\n@font-face {\n  font-family: \"Figtree\";\n  font-style: normal;\n  font-weight: 600;\n  font-display: swap;\n  src: url(\"http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/099bfc9e5a80a5ee.woff2\") format(\"woff2\");\n  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;\n}\n\n@font-face {\n  font-family: \"Figtree\";\n  font-style: normal;\n  font-weight: 600;\n  font-display: swap;\n  src: url(\"http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/3a2ed891ff74d561.woff\") format(\"woff\");\n  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;\n}\n\n@font-face {\n  font-family: \"Figtree\";\n  font-style: normal;\n  font-weight: 700;\n  font-display: swap;\n  src: url(\"http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/0a89493224e6989c.woff2\") format(\"woff2\");\n  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;\n}\n\n@font-face {\n  font-family: \"Figtree\";\n  font-style: normal;\n  font-weight: 700;\n  font-display: swap;\n  src: url(\"http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/997a1fdd31b6e397.woff\") format(\"woff\");\n  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;\n}\n\n@font-face {\n  font-family: \"Figtree fallback\";\n  src: local(\"Arial\");\n  ascent-override: 93.39%;\n  descent-override: 24.58%;\n  line-gap-override: 0.00%;\n  size-adjust: 101.72%;\n}\n\n.font-figtree {\n  font-family: var(--font-figtree);\n}",
+      "marcellus": "@font-face {\n  font-family: \"Marcellus\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/1106fbcb15526abb.woff2\") format(\"woff2\");\n  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;\n}\n\n@font-face {\n  font-family: \"Marcellus\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/f585963444fa8ede.woff\") format(\"woff\");\n  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;\n}\n\n@font-face {\n  font-family: \"Marcellus fallback\";\n  src: local(\"Arial\");\n  ascent-override: 94.08%;\n  descent-override: 27.02%;\n  line-gap-override: 0.00%;\n  size-adjust: 103.54%;\n}\n\n.font-marcellus {\n  font-family: var(--font-marcellus);\n}",
+      "pinyon-script": "@font-face {\n  font-family: \"Pinyon Script\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/85cbc93526f179fc.woff2\") format(\"woff2\");\n  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;\n}\n\n@font-face {\n  font-family: \"Pinyon Script\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/f2b0ba2e03b23192.woff\") format(\"woff\");\n  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;\n}\n\n@font-face {\n  font-family: \"Pinyon Script fallback\";\n  src: local(\"Arial\");\n  ascent-override: 106.76%;\n  descent-override: 47.52%;\n  line-gap-override: 0.00%;\n  size-adjust: 80.86%;\n}\n\n.font-pinyon-script {\n  font-family: var(--font-pinyon-script);\n}"
+    },
+    "variables": {
+      "figtree": "--font-figtree: \"Figtree\", \"Figtree fallback\";",
+      "marcellus": "--font-marcellus: \"Marcellus\", \"Marcellus fallback\";",
+      "pinyon-script": "--font-pinyon-script: \"Pinyon Script\", \"Pinyon Script fallback\";"
+    }
+  },
+  "preloads": [
+    {
+      "alias": "figtree",
+      "family": "Figtree",
+      "weight": 400,
+      "style": "normal",
+      "url": "http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/6f491e9b0d899954.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "figtree",
+      "family": "Figtree",
+      "weight": 500,
+      "style": "normal",
+      "url": "http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/1451213eef4d501d.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "figtree",
+      "family": "Figtree",
+      "weight": 600,
+      "style": "normal",
+      "url": "http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/099bfc9e5a80a5ee.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "figtree",
+      "family": "Figtree",
+      "weight": 700,
+      "style": "normal",
+      "url": "http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/0a89493224e6989c.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "marcellus",
+      "family": "Marcellus",
+      "weight": 400,
+      "style": "normal",
+      "url": "http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/1106fbcb15526abb.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "pinyon-script",
+      "family": "Pinyon Script",
+      "weight": 400,
+      "style": "normal",
+      "url": "http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/85cbc93526f179fc.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    }
+  ],
+  "families": {
+    "figtree": {
+      "family": "Figtree",
+      "variable": "--font-figtree",
+      "fallbackFamily": "Figtree fallback",
+      "variants": {
+        "400:normal": {
+          "files": [
+            {
+              "url": "http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/6f491e9b0d899954.woff2",
+              "format": "woff2",
+              "unicodeRange": "U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD"
+            },
+            {
+              "url": "http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/dd7622796dcc1f3c.woff",
+              "format": "woff",
+              "unicodeRange": "U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD"
+            }
+          ]
+        },
+        "500:normal": {
+          "files": [
+            {
+              "url": "http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/1451213eef4d501d.woff2",
+              "format": "woff2",
+              "unicodeRange": "U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD"
+            },
+            {
+              "url": "http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/d3adf07d8377e9a6.woff",
+              "format": "woff",
+              "unicodeRange": "U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD"
+            }
+          ]
+        },
+        "600:normal": {
+          "files": [
+            {
+              "url": "http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/099bfc9e5a80a5ee.woff2",
+              "format": "woff2",
+              "unicodeRange": "U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD"
+            },
+            {
+              "url": "http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/3a2ed891ff74d561.woff",
+              "format": "woff",
+              "unicodeRange": "U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD"
+            }
+          ]
+        },
+        "700:normal": {
+          "files": [
+            {
+              "url": "http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/0a89493224e6989c.woff2",
+              "format": "woff2",
+              "unicodeRange": "U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD"
+            },
+            {
+              "url": "http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/997a1fdd31b6e397.woff",
+              "format": "woff",
+              "unicodeRange": "U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD"
+            }
+          ]
+        }
+      }
+    },
+    "marcellus": {
+      "family": "Marcellus",
+      "variable": "--font-marcellus",
+      "fallbackFamily": "Marcellus fallback",
+      "variants": {
+        "400:normal": {
+          "files": [
+            {
+              "url": "http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/1106fbcb15526abb.woff2",
+              "format": "woff2",
+              "unicodeRange": "U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD"
+            },
+            {
+              "url": "http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/f585963444fa8ede.woff",
+              "format": "woff",
+              "unicodeRange": "U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD"
+            }
+          ]
+        }
+      }
+    },
+    "pinyon-script": {
+      "family": "Pinyon Script",
+      "variable": "--font-pinyon-script",
+      "fallbackFamily": "Pinyon Script fallback",
+      "variants": {
+        "400:normal": {
+          "files": [
+            {
+              "url": "http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/85cbc93526f179fc.woff2",
+              "format": "woff2",
+              "unicodeRange": "U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD"
+            },
+            {
+              "url": "http://127.0.0.1:5173/__laravel_vite_plugin__/fonts/f2b0ba2e03b23192.woff",
+              "format": "woff",
+              "unicodeRange": "U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

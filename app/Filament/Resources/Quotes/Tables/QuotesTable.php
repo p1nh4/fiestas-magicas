@@ -59,6 +59,32 @@ class QuotesTable
                 TextColumn::make('status')
                     ->label('Estado')
                     ->badge(),
+                /*
+                | O link do cliente, como coluna que se copia num clique.
+                |
+                | Duas coisas separadas de proposito: o que se VE e o que se
+                | COPIA. O `copyable()` do Filament copia o texto mostrado —
+                | por isso, com o URL truncado no ecra, era o URL truncado que
+                | ia para a area de transferencia. O `copyableState()` e o
+                | metodo que existe precisamente para isto.
+                |
+                | Meio URL cortado tambem nao informava ninguem; mostrar a
+                | acao diz mais do que mostrar o endereco.
+                |
+                | Fica a traco enquanto o orcamento for rascunho: ate estar
+                | enviado nao ha nada para mandar a ninguem.
+                */
+                TextColumn::make('enlace')
+                    ->label('Enlace')
+                    ->state(fn (Quote $record): ?string => $record->isEditable() ? null : 'Copiar enlace')
+                    ->placeholder('—')
+                    ->badge()
+                    ->color('gray')
+                    ->icon('heroicon-o-link')
+                    ->copyable()
+                    ->copyableState(fn (Quote $record): string => static::publicUrl($record))
+                    ->copyMessage('Enlace copiado')
+                    ->tooltip(fn (Quote $record): ?string => $record->isEditable() ? null : static::publicUrl($record)),
             ])
             ->filters([
                 SelectFilter::make('status')
@@ -93,25 +119,10 @@ class QuotesTable
                         Notification::make()
                             ->success()
                             ->title('Marcado como enviado')
-                            ->body('Ya puedes copiar el enlace del cliente.')
+                            ->body('El enlace para el cliente está en la columna "Enlace": un clic y se copia.')
                             ->send();
                     })
                     ->visible(fn (Quote $record): bool => $record->isEditable()),
-
-                // O link é a credencial do cliente: não aparece em lado nenhum
-                // da tabela, só se copia quando faz falta.
-                Action::make('enlace')
-                    ->label('Copiar enlace')
-                    ->icon('heroicon-o-link')
-                    ->color('gray')
-                    ->action(function (Quote $record): void {
-                        Notification::make()
-                            ->title('Enlace del cliente')
-                            ->body(static::publicUrl($record))
-                            ->persistent()
-                            ->send();
-                    })
-                    ->visible(fn (Quote $record): bool => ! $record->isEditable()),
 
                 Action::make('ver')
                     ->label('Ver como el cliente')
@@ -144,7 +155,7 @@ class QuotesTable
     }
 
     /** O link mágico, no idioma do cliente. */
-    private static function publicUrl(Quote $record): string
+    protected static function publicUrl(Quote $record): string
     {
         return route('quote.show', [
             'locale' => $record->event?->locale?->value ?? config('app.locale'),

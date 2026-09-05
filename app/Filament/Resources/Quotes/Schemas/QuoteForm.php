@@ -69,13 +69,20 @@ class QuoteForm
                 Section::make('Líneas')
                     ->description('Elige del catálogo y el precio se rellena solo. Puedes cambiarlo: lo que quede escrito aquí es lo que verá el cliente, aunque el catálogo cambie mañana.')
                     ->schema([
+                        // Seis colunas, tres filas certinhas: catalogo em cima,
+                        // descricao no meio a toda a largura, numeros em baixo.
+                        // A primeira versao tinha 12 colunas e campos que
+                        // somavam 22 — rebentavam para a linha seguinte
+                        // espremidos e nao se lia nada.
                         Repeater::make('lines')
                             ->hiddenLabel()
                             ->relationship()
                             ->orderColumn('position')
                             ->addActionLabel('Añadir línea')
                             ->disabled($locked)
-                            ->columns(12)
+                            ->collapsible()
+                            ->cloneable()
+                            ->columns(6)
                             ->itemLabel(fn (array $state): ?string => $state['description'] ?? null)
                             ->schema([
                                 Select::make('service_id')
@@ -89,6 +96,7 @@ class QuoteForm
                                     ->searchable()
                                     ->live()
                                     ->columnSpan(3)
+                                    ->helperText('Del catálogo de servicios.')
                                     // Escolher do catálogo preenche descrição e
                                     // preço, mas não os prende: a partir daqui
                                     // são texto e número desta linha.
@@ -112,6 +120,7 @@ class QuoteForm
                                     ->searchable()
                                     ->live()
                                     ->columnSpan(3)
+                                    ->helperText('O una pieza de alquiler.')
                                     ->afterStateUpdated(function ($state, Set $set): void {
                                         $item = $state !== null ? Item::find($state) : null;
                                         if ($item !== null) {
@@ -124,7 +133,8 @@ class QuoteForm
                                     ->label('Concepto')
                                     ->required()
                                     ->maxLength(300)
-                                    ->columnSpan(6),
+                                    ->columnSpanFull()
+                                    ->helperText('Es lo que lee el cliente. Puedes escribirlo a mano sin elegir nada arriba.'),
                                 TextInput::make('quantity')
                                     ->label('Cant.')
                                     ->numeric()
@@ -132,22 +142,21 @@ class QuoteForm
                                     ->minValue(0.01)
                                     ->step('0.01')
                                     ->required()
-                                    ->columnSpan(2),
+                                    ->columnSpan(1),
                                 TextInput::make('days')
                                     ->label('Días')
                                     ->numeric()
                                     ->default(1)
                                     ->minValue(1)
                                     ->required()
-                                    ->columnSpan(2)
-                                    ->helperText('1 salvo alquiler de varios días.'),
+                                    ->columnSpan(1),
                                 TextInput::make('unit_price')
                                     ->label('Precio')
                                     ->numeric()
                                     ->prefix('€')
                                     ->default(0)
                                     ->required()
-                                    ->columnSpan(3),
+                                    ->columnSpan(2),
                                 // Só para ver. O total real é recalculado em
                                 // bcmath ao gravar — ver EditQuote.
                                 TextInput::make('line_total')
@@ -155,7 +164,7 @@ class QuoteForm
                                     ->prefix('€')
                                     ->disabled()
                                     ->dehydrated(false)
-                                    ->columnSpan(3),
+                                    ->columnSpan(2),
                             ]),
                     ]),
 
