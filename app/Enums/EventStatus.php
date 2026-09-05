@@ -4,14 +4,20 @@ declare(strict_types=1);
 
 namespace App\Enums;
 
+use Filament\Support\Contracts\HasColor;
+use Filament\Support\Contracts\HasLabel;
+
 /**
  * Gerado a partir de database/schema/schema.sql — nao editar a mao.
  *
  * Os valores sao exatamente os que a base de dados aceita. O CHECK do
  * Postgres continua a ser a ultima linha de defesa; este enum e para o
  * PHP e para os formularios.
+ *
+ * Implementa os contratos do Filament para que um `->options(EventStatus::class)`
+ * mostre a etiqueta traduzida e nao o nome do case em ingles.
  */
-enum EventStatus: string
+enum EventStatus: string implements HasColor, HasLabel
 {
     case Draft = 'draft';
     case Quoted = 'quoted';
@@ -24,6 +30,24 @@ enum EventStatus: string
     public function label(): string
     {
         return __('enums.event_status.' . $this->value);
+    }
+
+    /** Contrato do Filament — selects, badges e filtros. */
+    public function getLabel(): string
+    {
+        return $this->label();
+    }
+
+    public function getColor(): string
+    {
+        return match ($this) {
+            self::Draft => 'gray',
+            self::Quoted => 'warning',
+            self::Confirmed => 'info',
+            self::InProgress => 'primary',
+            self::Done => 'success',
+            self::Cancelled => 'danger',
+        };
     }
 
     /** Para os selects do Filament e dos formularios publicos. */

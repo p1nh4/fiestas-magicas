@@ -49,6 +49,16 @@ return [
     // "por confirmar" em vez de inventar um horário.
     'opening_hours' => null,
 
+    // Eventos. O prefixo entra na referencia que o cliente ve no orcamento
+    // e um dia na fatura — mudar isto a meio do ano parte a numeracao.
+    'event' => [
+        'reference_prefix' => env('BUSINESS_REF_PREFIX', 'FM'),
+        // Horario por omissao quando o pedido so traz a data. A Sol corrige
+        // no evento; isto e so para nao ter de escrever tudo de raiz.
+        'default_start_hour' => (int) env('EVENT_DEFAULT_START_HOUR', 12),
+        'default_hours' => (int) env('EVENT_DEFAULT_HOURS', 6),
+    ],
+
     'quote' => [
         'deposit_pct' => (int) env('QUOTE_DEPOSIT_PCT', 30),
         'valid_days' => (int) env('QUOTE_VALID_DAYS', 15),
