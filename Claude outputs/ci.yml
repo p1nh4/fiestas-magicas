@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: fiestas
+          POSTGRES_PASSWORD: fiestas
+          POSTGRES_DB: fiestas_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_pgsql, mbstring, xml, curl, zip, gd, intl, bcmath
+          coverage: none
+
+      - name: Cache do composer
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+
+      - run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Preparar ambiente
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          sed -i 's/^DB_DATABASE=.*/DB_DATABASE=fiestas_test/' .env
+
+      # O esquema é a fonte de verdade e tem os seus próprios testes em SQL.
+      # Correm primeiro: se o modelo de dados está partido, o resto não interessa.
+      - name: Testes do esquema (SQL puro)
+        env:
+          PGPASSWORD: fiestas
+        run: |
+          psql -h localhost -U fiestas -d fiestas_test -v ON_ERROR_STOP=1 \
+               -f database/schema/schema.sql
+          psql -h localhost -U fiestas -d fiestas_test \
+               -f database/schema/tests.sql | tee /tmp/schema-tests.txt
+          grep -qE '^\s+[0-9]+\s+\|\s+0\s+\|' /tmp/schema-tests.txt \
+            || { echo '::error::há testes do esquema a falhar'; exit 1; }
+
+      - name: Teste de concorrência (write skew nas reservas)
+        env:
+          PGPASSWORD: fiestas
+        run: |
+          pip install --quiet psycopg2-binary
+          python3 database/schema/test_concurrency.py fiestas_test
+
+      - name: As migrations reproduzem o esquema
+        run: |
+          psql -h localhost -U fiestas -d fiestas_test -c 'DROP SCHEMA public CASCADE; CREATE SCHEMA public;'
+          php artisan migrate --force
+        env:
+          PGPASSWORD: fiestas
+
+      - name: Pint (estilo)
+        run: ./vendor/bin/pint --test
+
+      - name: Larastan (análise estática)
+        run: ./vendor/bin/phpstan analyse --no-progress
+
+      - name: Pest
+        run: ./vendor/bin/pest --ci
