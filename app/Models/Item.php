@@ -41,6 +41,30 @@ class Item extends Model
         'requires_transport', 'is_rentable', 'is_active',
     ];
 
+    /*
+     * Os mesmos valores por omissao do schema.sql.
+     *
+     * O Eloquent NAO conhece os DEFAULT da base de dados. Um
+     * `Item::create([...])` sem folgas fica com null em memoria — a linha
+     * gravada leva os 120/1440 do Postgres, mas o objeto que fica na mao
+     * nao. E entao `blockedWindowFor()` chama `padded(null, null)` e
+     * rebenta com um TypeError.
+     *
+     * Foi o mesmo erro que apanhou o `Lead::status`. Repetir os defaults
+     * aqui e duplicacao, sim — mas e duplicacao que o gerador mantem
+     * sincronizada com o schema, e a alternativa e codigo defensivo
+     * espalhado por todo o lado a perguntar se o valor existe.
+     */
+    protected $attributes = [
+        'stock_qty' => 1,
+        'price_per_day' => 0,
+        'buffer_before_min' => 120,
+        'buffer_after_min' => 1440,
+        'requires_transport' => false,
+        'is_rentable' => true,
+        'is_active' => true,
+    ];
+
     protected function casts(): array
     {
         return [

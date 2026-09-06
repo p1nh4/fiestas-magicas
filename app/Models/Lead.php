@@ -25,6 +25,12 @@ class Lead extends Model
         'ip_hash', 'user_agent', 'contacted_at', 'converted_at', 'lost_reason',
     ];
 
+    /* Ver a nota no Item: o Eloquent nao conhece os DEFAULT do Postgres. */
+    protected $attributes = [
+        'status' => 'new',
+        'locale' => 'es',
+    ];
+
     protected function casts(): array
     {
         return [
