@@ -7,11 +7,14 @@ namespace App\Http\Controllers;
 use App\Enums\LeadStatus;
 use App\Http\Requests\StoreLeadRequest;
 use App\Models\Lead;
+use App\Support\Mail\Notifier;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 
 final class LeadController extends Controller
 {
+    public function __construct(private readonly Notifier $notifier) {}
+
     public function store(StoreLeadRequest $request): RedirectResponse
     {
         $lead = Lead::create([
@@ -36,9 +39,12 @@ final class LeadController extends Controller
             'user_agent' => mb_substr((string) $request->userAgent(), 0, 400),
         ]);
 
-        // TODO(fase 2): notificar a Sol por email e WhatsApp.
-        // Fica de fora aqui de propósito — sem conta de email configurada,
-        // enviar aqui só faria o formulário rebentar em produção.
+        // Confirmação para quem escreveu e aviso para a Sol.
+        //
+        // O Notifier engole qualquer falha e escreve no log: um servidor de
+        // email em baixo não pode transformar um pedido de orçamento num
+        // erro 500. O pedido já está guardado — o email é o extra.
+        $this->notifier->leadReceived($lead);
 
         return redirect()
             ->route('lead.thanks')

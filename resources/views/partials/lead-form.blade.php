@@ -128,9 +128,22 @@
         <input id="f-privacy" name="privacy" type="checkbox" value="1" required
                @checked(old('privacy'))
                class="mt-1 h-4 w-4 shrink-0 accent-[var(--color-rosa)]">
+        {{--
+            O href="#" que aqui estava era um problema a serio: pedia-se
+            consentimento RGPD apontando para o vazio. Agora ou ha politica
+            publicada e o texto e uma ligacao, ou nao ha e fica so texto —
+            nunca uma promessa falsa.
+        --}}
+        @php
+            $privacyUrl = \App\Models\Page::urlFor(\App\Models\Page::PRIVACY);
+            $privacyText = e(__('forms.labels.privacy_link'));
+        @endphp
+
         <label for="f-privacy" class="text-[0.86rem] text-ink-2">
             {!! __('forms.labels.privacy', [
-                'link' => '<a href="#" class="text-rosa underline">'.e(__('forms.labels.privacy_link')).'</a>',
+                'link' => $privacyUrl
+                    ? '<a href="'.e($privacyUrl).'" target="_blank" rel="noopener" class="text-rosa underline">'.$privacyText.'</a>'
+                    : $privacyText,
             ]) !!}
         </label>
     </div>

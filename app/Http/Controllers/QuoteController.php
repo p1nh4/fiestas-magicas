@@ -8,6 +8,7 @@ use App\Enums\PaymentStatus;
 use App\Enums\QuoteStatus;
 use App\Models\Quote;
 use App\Support\Availability\OutOfStockException;
+use App\Support\Mail\Notifier;
 use App\Support\Payments\PaymentGateway;
 use App\Support\Quotes\QuoteAcceptance;
 use App\Support\Quotes\QuoteNotAcceptable;
@@ -25,7 +26,10 @@ use Illuminate\Http\Request;
  */
 final class QuoteController extends Controller
 {
-    public function __construct(private readonly QuoteAcceptance $acceptance) {}
+    public function __construct(
+        private readonly QuoteAcceptance $acceptance,
+        private readonly Notifier $notifier,
+    ) {}
 
     public function show(string $locale, string $token): View
     {
@@ -109,6 +113,11 @@ final class QuoteController extends Controller
             $payment->update(['status' => PaymentStatus::Paid, 'paid_at' => now()]);
 
             $quote->event->increment('paid_amount', (float) $payment->amount);
+
+            // Recibo do sinal. Só DEPOIS de a passarela confirmar — mandar
+            // um "recebemos o teu dinheiro" a quem só abriu o URL de
+            // retorno seria pior do que não mandar nada.
+            $this->notifier->depositReceived($payment->fresh());
 
             return redirect()->route('quote.show', ['token' => $token])
                 ->with('payment_confirmed', true);

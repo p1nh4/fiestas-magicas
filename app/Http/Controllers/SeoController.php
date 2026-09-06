@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\Item;
 use App\Models\ServiceArea;
 use App\Support\Locales;
 use Illuminate\Http\Response;
@@ -39,22 +40,31 @@ final class SeoController extends Controller
             'priority' => '0.7',
         ];
 
+        // Catálogo de aluguer.
+        $entries[] = [
+            'urls' => $this->urlsFor('rentals.index'),
+            'changefreq' => 'monthly',
+            'priority' => '0.7',
+        ];
+
+        foreach (Item::query()->rentable()->get() as $item) {
+            $urls = $this->translatedUrls('rentals.show', $item, 'slug');
+
+            if ($urls !== []) {
+                $entries[] = [
+                    'urls' => $urls,
+                    'changefreq' => 'monthly',
+                    'priority' => '0.6',
+                    'lastmod' => $item->updated_at?->toAtomString(),
+                ];
+            }
+        }
+
         // Uma entrada por zona publicada. As que estão em rascunho não
         // entram: não têm página, e anunciá-las no sitemap seria mandar o
         // Google a um 404.
         foreach (ServiceArea::query()->published()->get() as $area) {
-            $urls = [];
-            foreach (Locales::SUPPORTED as $locale) {
-                $slug = $area->getTranslation('slug', $locale, false);
-
-                // Uma zona sem endereço num idioma simplesmente não existe
-                // nesse idioma. Melhor faltar do que apontar para o vazio.
-                if (blank($slug)) {
-                    continue;
-                }
-
-                $urls[$locale] = route('areas.show', ['locale' => $locale, 'slug' => $slug]);
-            }
+            $urls = $this->translatedUrls('areas.show', $area, 'slug');
 
             if ($urls !== []) {
                 $entries[] = [
@@ -122,6 +132,31 @@ final class SeoController extends Controller
         return response(implode("\n", $lines)."\n", 200, [
             'Content-Type' => 'text/plain; charset=utf-8',
         ]);
+    }
+
+    /**
+     * As URLs de um registo com endereço próprio por idioma.
+     *
+     * Um registo sem slug num idioma simplesmente não existe nesse idioma:
+     * melhor faltar no sitemap do que apontar para uma página que dá 404.
+     *
+     * @return array<string, string>
+     */
+    private function translatedUrls(string $route, object $model, string $field): array
+    {
+        $urls = [];
+
+        foreach (Locales::SUPPORTED as $locale) {
+            $slug = $model->getTranslation($field, $locale, false);
+
+            if (blank($slug)) {
+                continue;
+            }
+
+            $urls[$locale] = route($route, ['locale' => $locale, 'slug' => $slug]);
+        }
+
+        return $urls;
     }
 
     /**

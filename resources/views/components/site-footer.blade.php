@@ -32,7 +32,28 @@
 
         <div class="mt-8 flex flex-wrap justify-between gap-x-6 gap-y-2 border-t border-line pt-4 text-[0.82rem]">
             <span>&copy; {{ date('Y') }} {{ $b['name'] }} · {{ $b['sub'] }}</span>
-            <span>{{ __('site.footer.legal') }} · {{ __('site.footer.privacy') }} · {{ __('site.footer.cookies') }}</span>
+            {{--
+                Cada uma vira ligacao SO quando a pagina existe e esta
+                publicada. Um link morto num rodape legal e pior do que
+                texto simples: promete uma pagina que nao ha.
+            --}}
+            <span class="flex flex-wrap gap-x-1.5">
+                @foreach ([
+                    \App\Models\Page::LEGAL => __('site.footer.legal'),
+                    \App\Models\Page::PRIVACY => __('site.footer.privacy'),
+                    \App\Models\Page::COOKIES => __('site.footer.cookies'),
+                ] as $key => $label)
+                    @php $url = \App\Models\Page::urlFor($key); @endphp
+
+                    @if (! $loop->first)<span aria-hidden="true">·</span>@endif
+
+                    @if ($url)
+                        <a href="{{ $url }}" class="underline underline-offset-2 hover:text-oro">{{ $label }}</a>
+                    @else
+                        <span>{{ $label }}</span>
+                    @endif
+                @endforeach
+            </span>
         </div>
     </div>
 </footer>

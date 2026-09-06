@@ -24,6 +24,12 @@ return [
     'whatsapp' => env('BUSINESS_WHATSAPP', '34684291843'),
     'email' => env('BUSINESS_EMAIL'),
 
+    // Para onde vão os avisos internos de pedido novo. Vazio = não se
+    // envia aviso nenhum. Nunca se adivinha um endereço: um email mandado
+    // para o sítio errado faz pior do que email nenhum — dá a sensação de
+    // que a Sol foi avisada quando não foi.
+    'alert_email' => env('BUSINESS_ALERT_EMAIL'),
+
     'instagram' => env('BUSINESS_INSTAGRAM', 'fiestas_magicas_en_galicia'),
     'facebook' => env('BUSINESS_FACEBOOK'),
 

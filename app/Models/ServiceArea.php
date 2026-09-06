@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Models\Concerns\HasPublicUuid;
+use App\Models\Concerns\KeepsOldUrls;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -29,8 +30,15 @@ class ServiceArea extends Model
     use HasFactory;
     use HasPublicUuid;
     use HasTranslations;
+    use KeepsOldUrls;
 
     public array $translatable = ['slug', 'intro'];
+
+    /** Tem pagina publica em /{idioma}/zonas/{slug}. */
+    public function publicRouteName(): ?string
+    {
+        return 'areas.show';
+    }
 
     protected $fillable = [
         'name', 'slug', 'province', 'country',

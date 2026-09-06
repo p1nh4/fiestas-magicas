@@ -6,6 +6,7 @@ namespace App\Filament\Resources\Quotes\Tables;
 
 use App\Enums\QuoteStatus;
 use App\Models\Quote;
+use App\Support\Mail\Notifier;
 use App\Support\Quotes\QuoteBuilder;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
@@ -116,10 +117,19 @@ class QuotesTable
 
                         app(QuoteBuilder::class)->markSent($record);
 
+                        // Agora "enviar" envia mesmo. Se o cliente não tiver
+                        // email, o Notifier nao faz nada — e o link continua
+                        // na coluna, para ir por WhatsApp.
+                        app(Notifier::class)->quoteSent($record->fresh(), static::publicUrl($record));
+
+                        $hasEmail = filled($record->event?->client?->email);
+
                         Notification::make()
                             ->success()
                             ->title('Marcado como enviado')
-                            ->body('El enlace para el cliente está en la columna "Enlace": un clic y se copia.')
+                            ->body($hasEmail
+                                ? 'Le hemos mandado el presupuesto por correo. El enlace también está en la columna "Enlace".'
+                                : 'Este cliente no tiene email: copia el enlace de la columna "Enlace" y mándaselo por WhatsApp.')
                             ->send();
                     })
                     ->visible(fn (Quote $record): bool => $record->isEditable()),

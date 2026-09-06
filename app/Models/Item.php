@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Models\Concerns\HasPublicUuid;
+use App\Models\Concerns\KeepsOldUrls;
 use App\Support\Period;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,8 +24,15 @@ class Item extends Model
     use HasFactory;
     use HasPublicUuid;
     use HasTranslations;
+    use KeepsOldUrls;
 
     public array $translatable = ['name', 'slug', 'description'];
+
+    /** Tem pagina publica em /{idioma}/alquiler/{slug}. */
+    public function publicRouteName(): ?string
+    {
+        return 'rentals.show';
+    }
 
     protected $fillable = [
         'category_id', 'sku', 'name', 'slug', 'description',

@@ -5,6 +5,8 @@ declare(strict_types=1);
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LeadController;
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\RentalController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\SeoController;
 use App\Http\Middleware\SetLocale;
@@ -57,6 +59,17 @@ Route::prefix('{locale}')
         Route::get('/zonas/{slug}', [AreaController::class, 'show'])->name('areas.show');
 
         /*
+        | Catálogo de aluguer.
+        |
+        | A consulta de disponibilidade vai em GET, com as datas na barra de
+        | endereços: assim a pessoa pode guardar ou partilhar o link, e não
+        | há nada de pessoal lá dentro. Como qualquer GET, não muda nada —
+        | consultar não reserva; quem reserva é o orçamento aceite.
+        */
+        Route::get('/alquiler', [RentalController::class, 'index'])->name('rentals.index');
+        Route::get('/alquiler/{slug}', [RentalController::class, 'show'])->name('rentals.show');
+
+        /*
         | Orçamento do cliente.
         |
         | Sem login: o token de 64 caracteres na URL é a credencial. Obrigar
@@ -76,4 +89,17 @@ Route::prefix('{locale}')
                     Route::post('/pagar', [QuoteController::class, 'pay'])->name('quote.pay');
                 });
             });
+
+        /*
+        | Páginas de texto: aviso legal, privacidade, cookies.
+        |
+        | Esta rota apanha tudo o que sobrar dentro do idioma, por isso TEM
+        | de ficar em último lugar: registada antes, engolia /zonas e
+        | /alquiler. Se um dia se acrescentar uma secção nova, tem de ficar
+        | acima desta linha.
+        */
+        Route::get('/{slug}', [PageController::class, 'show'])
+            ->where('slug', '[a-z0-9\\-]+')
+            ->name('page.show');
+
     });
