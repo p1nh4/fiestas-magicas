@@ -116,9 +116,35 @@ final class LeadConversion
             return $lead->client;
         }
 
-        $existing = Client::query()
-            ->when($lead->email !== null, fn ($q) => $q->orWhere('email', $lead->email))
-            ->when($lead->phone !== null, fn ($q) => $q->orWhere('phone', $lead->phone))
+        /*
+         * Encontrar a mesma pessoa, escrita de outra maneira.
+         *
+         * As tres comparacoes eram exatas, e falhavam nos dois casos mais
+         * comuns: a Sol tinha a ficha com `Marta@Gmail.com` e o formulario
+         * chega em minusculas (o indice da tabela e `lower(email)`, o PHP e
+         * que nao seguia); e o telefone gravado como `+34600000000` nunca
+         * batia com `600 000 000`. Alem disso o SoftDeletes escondia os
+         * clientes arquivados, e criava-se um segundo em vez de recuperar o
+         * antigo.
+         */
+        $email = $lead->email !== null ? mb_strtolower(trim($lead->email)) : null;
+        $phone = $lead->phone !== null ? preg_replace('/\D+/', '', $lead->phone) : null;
+
+        $existing = Client::withTrashed()
+            ->where(function ($q) use ($email, $phone) {
+                if ($email !== null && $email !== '') {
+                    $q->orWhereRaw('lower(email) = ?', [$email]);
+                }
+
+                if ($phone !== null && mb_strlen($phone) >= 6) {
+                    // Compara so os digitos, e pelos ultimos nove: e o que
+                    // sobrevive a prefixos escritos de maneiras diferentes.
+                    $q->orWhereRaw(
+                        "right(regexp_replace(coalesce(phone, ''), '\\D', '', 'g'), 9) = ?",
+                        [mb_substr($phone, -9)],
+                    );
+                }
+            })
             ->first();
 
         if ($existing !== null) {

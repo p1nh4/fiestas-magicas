@@ -52,6 +52,8 @@ return [
         'privacy' => 'Precisamos da tua autorização para guardar estes dados e responder.',
         'date_past' => 'Essa data já passou. Querias outro ano?',
         'spam' => 'Não foi possível processar o formulário. Escreve-nos por WhatsApp.',
+        'required' => 'Este campo é obrigatório.',
+        'email_format' => 'Esse email não parece válido. Falta a @ ou o ponto?',
         'title' => 'Revê estes campos',
     ],
 ];

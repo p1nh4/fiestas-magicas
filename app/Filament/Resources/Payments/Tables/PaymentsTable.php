@@ -8,6 +8,8 @@ use App\Enums\PaymentKind;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Models\Payment;
+use App\Support\Payments\SettlePayment;
+use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
@@ -15,7 +17,6 @@ use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\DB;
 
 class PaymentsTable
 {
@@ -108,18 +109,40 @@ class PaymentsTable
                             ->default(now())
                             ->required(),
                     ])
+                    /*
+                     * Passa pelo `SettlePayment`, como o cartao.
+                     *
+                     * Aqui estava um `update` + `increment` proprio. Ficavam
+                     * de fora as duas coisas que o `SettlePayment` existe
+                     * para garantir: o bloqueio da linha com reverificacao do
+                     * estado (sem ele, este botao e o `payments:reconcile` a
+                     * cruzarem-se somavam o mesmo dinheiro duas vezes ao
+                     * evento) e, sobretudo, o RECIBO — uma cliente que
+                     * pagasse por Bizum nunca recebia prova nenhuma, e so
+                     * quem pagava por cartao e que recebia.
+                     */
                     ->action(function (Payment $record, array $data): void {
-                        DB::transaction(function () use ($record, $data) {
-                            $record->update([
-                                'status' => PaymentStatus::Paid,
-                                'method' => $data['method'],
-                                'paid_at' => $data['paid_at'],
-                            ]);
+                        $liquidado = app(SettlePayment::class)->settleManually(
+                            $record,
+                            $data['method'],
+                            $data['paid_at'] ? Carbon::parse($data['paid_at']) : null,
+                        );
 
-                            $record->event?->increment('paid_amount', (float) $record->amount);
-                        });
+                        if (! $liquidado) {
+                            Notification::make()
+                                ->warning()
+                                ->title('Este pago ya estaba cobrado')
+                                ->body('Alguien o algo lo registró antes. No se ha sumado dos veces.')
+                                ->send();
 
-                        Notification::make()->success()->title('Pago registrado')->send();
+                            return;
+                        }
+
+                        Notification::make()
+                            ->success()
+                            ->title('Pago registrado')
+                            ->body('Le hemos mandado el recibo por correo.')
+                            ->send();
                     })
                     ->visible(fn (Payment $record): bool => $record->status === PaymentStatus::Pending),
             ])

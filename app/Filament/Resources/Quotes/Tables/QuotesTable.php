@@ -122,7 +122,20 @@ class QuotesTable
                         // na coluna, para ir por WhatsApp.
                         app(Notifier::class)->quoteSent($record->fresh(), static::publicUrl($record));
 
-                        $hasEmail = filled($record->event?->client?->email);
+                        /*
+                         * So se promete o email se ele puder mesmo sair.
+                         *
+                         * Com `MAIL_MAILER=log` — que e o que esta agora — o
+                         * Notifier escreve no ficheiro de log e devolve sem
+                         * erro, e a Sol via "le hemos mandado el presupuesto
+                         * por correo" e ficava a espera de uma resposta que
+                         * nunca ia chegar, em vez de copiar o link para o
+                         * WhatsApp.
+                         */
+                        $emailSai = filled($record->event?->client?->email)
+                            && ! in_array(config('mail.default'), ['log', 'array', null], true);
+
+                        $hasEmail = $emailSai;
 
                         Notification::make()
                             ->success()

@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Enums\QuoteStatus;
 use App\Models\Concerns\HasPublicUuid;
+use App\Support\Money;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -64,13 +65,23 @@ class Quote extends Model
         return $this->status === QuoteStatus::Draft;
     }
 
+    /**
+     * Um orçamento válido até 20 de setembro ainda vale no dia 20 inteiro.
+     *
+     * O `valid_until` é uma DATA, e o cast põe-na às 00:00 — por isso o
+     * `isPast()` ficava verdadeiro logo à meia-noite do próprio dia de
+     * validade. O `quotes:expire` faz o contrário (`whereDate < hoje`), e
+     * os dois discordavam: o backoffice mostrava "enviado", a cliente abria
+     * o link e via "caducado". Perdia-se um dia inteiro em todos.
+     */
     public function isExpired(): bool
     {
-        return $this->valid_until !== null && $this->valid_until->isPast();
+        return $this->valid_until !== null
+            && $this->valid_until->endOfDay()->isPast();
     }
 
     public function depositAmount(): string
     {
-        return bcdiv(bcmul((string) $this->total, (string) $this->deposit_pct, 4), '100', 2);
+        return Money::percent((string) $this->total, (string) $this->deposit_pct);
     }
 }

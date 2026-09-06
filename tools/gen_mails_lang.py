@@ -7,7 +7,7 @@ idiomas seria trabalho a mais para ninguem.
 import pathlib
 import sys
 
-OUT = pathlib.Path('f6/lang')
+OUT = pathlib.Path('lang')
 
 M = {}
 
@@ -51,6 +51,20 @@ M['es'] = {
         'when': 'El resto se paga el día del evento.',
         'next': 'Unos días antes te escribimos para cerrar los últimos detalles: horas de montaje, accesos y quién nos abre la puerta.',
     },
+    'reminder': {
+        'subject': 'Ya casi: :event',
+        'preview': 'Repasamos los últimos detalles.',
+        'body': 'Quedan :days días. Te escribimos para repasar los últimos detalles y que no quede nada al aire.',
+        'when': 'La fiesta empieza',
+        'setup': 'Llegamos a montar',
+        'where': 'Dónde',
+        'pending': 'Queda por pagar',
+        'ask_title': 'Tres cosas que nos ayudan mucho a saber de antemano:',
+        'ask_access': '¿Cómo entramos? ¿Hay que avisar a alguien, hay escaleras, se puede aparcar cerca?',
+        'ask_time': '¿A qué hora podemos empezar a montar?',
+        'ask_contact': '¿Quién estará allí ese día, por si no te localizamos a ti?',
+        'wa': 'Contestar por WhatsApp',
+    },
 }
 
 M['gl'] = {
@@ -93,6 +107,20 @@ M['gl'] = {
         'when': 'O resto págase o día do evento.',
         'next': 'Uns días antes escribímosche para pechar os últimos detalles: horas de montaxe, accesos e quen nos abre a porta.',
     },
+    'reminder': {
+        'subject': 'Xa case: :event',
+        'preview': 'Repasamos os últimos detalles.',
+        'body': 'Quedan :days días. Escribímosche para repasar os últimos detalles e que non quede nada no aire.',
+        'when': 'A festa empeza',
+        'setup': 'Chegamos a montar',
+        'where': 'Onde',
+        'pending': 'Queda por pagar',
+        'ask_title': 'Tres cousas que nos axudan moito a saber de antemán:',
+        'ask_access': 'Como entramos? Hai que avisar a alguén, hai escaleiras, pódese aparcar preto?',
+        'ask_time': 'A que hora podemos empezar a montar?',
+        'ask_contact': 'Quen estará alí ese día, por se non te localizamos a ti?',
+        'wa': 'Contestar por WhatsApp',
+    },
 }
 
 M['pt'] = {
@@ -134,6 +162,20 @@ M['pt'] = {
         'pending': 'Falta pagar',
         'when': 'O resto paga-se no dia do evento.',
         'next': 'Uns dias antes escrevemos para fechar os últimos pormenores: horas de montagem, acessos e quem nos abre a porta.',
+    },
+    'reminder': {
+        'subject': 'Está quase: :event',
+        'preview': 'Vamos rever os últimos pormenores.',
+        'body': 'Faltam :days dias. Escrevemos para rever os últimos pormenores e não ficar nada por combinar.',
+        'when': 'A festa começa',
+        'setup': 'Chegamos para montar',
+        'where': 'Onde',
+        'pending': 'Falta pagar',
+        'ask_title': 'Três coisas que ajudam muito a saber de antemão:',
+        'ask_access': 'Como entramos? É preciso avisar alguém, há escadas, dá para estacionar perto?',
+        'ask_time': 'A que horas podemos começar a montar?',
+        'ask_contact': 'Quem estará lá nesse dia, caso não te consigamos apanhar?',
+        'wa': 'Responder por WhatsApp',
     },
 }
 

@@ -229,6 +229,10 @@ CREATE TABLE events (
     total_amount        numeric(10,2) NOT NULL DEFAULT 0,
     deposit_amount      numeric(10,2) NOT NULL DEFAULT 0,
     paid_amount         numeric(10,2) NOT NULL DEFAULT 0,
+    -- Quando se mandou o lembrete dos dias antes. Existe para NAO se mandar
+    -- duas vezes: o comando corre todos os dias e a janela dura varios dias,
+    -- por isso sem esta marca a cliente recebia o mesmo email quatro vezes.
+    reminder_sent_at    timestamptz,
     created_at          timestamptz NOT NULL DEFAULT now(),
     updated_at          timestamptz NOT NULL DEFAULT now(),
     deleted_at          timestamptz,
@@ -570,11 +574,13 @@ CREATE TABLE projects (
     published_at    timestamptz,
     position        int NOT NULL DEFAULT 0,
     seo             jsonb NOT NULL DEFAULT '{}'::jsonb,
+    photos          jsonb NOT NULL DEFAULT '[]'::jsonb,
     -- consentimento explícito do cliente para publicar as fotos da sua festa
     consent_at      timestamptz,
     created_at      timestamptz NOT NULL DEFAULT now(),
     updated_at      timestamptz NOT NULL DEFAULT now(),
-    CONSTRAINT projects_publish_chk CHECK (NOT is_published OR consent_at IS NOT NULL)
+    CONSTRAINT projects_publish_chk CHECK (NOT is_published OR consent_at IS NOT NULL),
+    CONSTRAINT projects_photos_chk CHECK (jsonb_typeof(photos) = 'array')
 );
 CREATE UNIQUE INDEX projects_slug_es_uq ON projects ((slug->>'es'));
 CREATE UNIQUE INDEX projects_slug_gl_uq ON projects ((slug->>'gl'));
@@ -688,5 +694,57 @@ CREATE UNIQUE INDEX service_areas_slug_es_uq ON service_areas ((slug->>'es'));
 CREATE UNIQUE INDEX service_areas_slug_gl_uq ON service_areas ((slug->>'gl'));
 CREATE UNIQUE INDEX service_areas_slug_pt_uq ON service_areas ((slug->>'pt'));
 CREATE INDEX service_areas_pub_idx ON service_areas (is_published, position);
+
+-- @@SLICE designs
+-- ---------------------------------------------------------------------------
+--  O projeto de uma festa: a ideia antes de virar orçamento.
+--
+--  Nome: chama-se `event_designs` e não `projects` porque `projects` já é o
+--  portefólio — os trabalhos publicados no site. São coisas opostas: um é o
+--  rascunho privado de uma festa que ainda não aconteceu, o outro é a foto
+--  da festa que correu bem. Partilhar o nome era garantir que um dia alguém
+--  publicava o rascunho.
+--
+--  UNIQUE no event_id: um desenho por festa. Sem isto acabavam dois
+--  desenhos concorrentes para a mesma festa e ninguém sabia qual valia —
+--  que é exatamente o problema que este módulo existe para evitar.
+-- ---------------------------------------------------------------------------
+CREATE TABLE event_designs (
+    id           bigserial PRIMARY KEY,
+    uuid         uuid NOT NULL UNIQUE DEFAULT gen_random_uuid(),
+    event_id     bigint NOT NULL UNIQUE REFERENCES events(id) ON DELETE CASCADE,
+    theme        varchar(120),                       -- "Sirenas", "Fútbol", "Bosque"
+    palette      jsonb NOT NULL DEFAULT '[]'::jsonb, -- cores em hexadecimal
+    notes        text,                               -- a ideia, por palavras
+    inspiration  jsonb NOT NULL DEFAULT '[]'::jsonb, -- links de referência
+    photos       jsonb NOT NULL DEFAULT '[]'::jsonb, -- ficheiros carregados
+    checklist    jsonb NOT NULL DEFAULT '[]'::jsonb, -- passos da montagem
+    created_at   timestamptz NOT NULL DEFAULT now(),
+    updated_at   timestamptz NOT NULL DEFAULT now()
+);
+
+-- ---------------------------------------------------------------------------
+--  O material que o desenho prevê.
+--
+--  NÃO é uma reserva. É uma intenção: "para esta festa penso levar isto".
+--  A reserva só nasce quando o orçamento é aceite — é lá que o trigger do
+--  stock decide. Confundir as duas coisas seria prender material por causa
+--  de uma ideia que ainda pode mudar.
+-- ---------------------------------------------------------------------------
+CREATE TABLE event_design_items (
+    id           bigserial PRIMARY KEY,
+    design_id    bigint NOT NULL REFERENCES event_designs(id) ON DELETE CASCADE,
+    item_id      bigint NOT NULL REFERENCES items(id) ON DELETE RESTRICT,
+    quantity     int NOT NULL DEFAULT 1 CHECK (quantity > 0),
+    notes        varchar(200),
+    position     int NOT NULL DEFAULT 0,
+    created_at   timestamptz NOT NULL DEFAULT now(),
+    updated_at   timestamptz NOT NULL DEFAULT now(),
+    -- A mesma peça duas vezes no mesmo desenho é sempre um engano: o que se
+    -- queria era mudar a quantidade.
+    CONSTRAINT event_design_items_uq UNIQUE (design_id, item_id)
+);
+
+CREATE INDEX event_design_items_design_idx ON event_design_items (design_id, position);
 
 COMMIT;

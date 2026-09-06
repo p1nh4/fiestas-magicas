@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Enums\PaymentKind;
 use App\Enums\PaymentStatus;
 use App\Enums\QuoteStatus;
+use App\Models\Payment;
 use App\Models\Quote;
 use App\Support\Availability\OutOfStockException;
 use App\Support\Mail\Notifier;
 use App\Support\Payments\PaymentGateway;
+use App\Support\Payments\SettlePayment;
 use App\Support\Quotes\QuoteAcceptance;
 use App\Support\Quotes\QuoteNotAcceptable;
 use Illuminate\Contracts\View\View;
@@ -74,13 +77,32 @@ final class QuoteController extends Controller
     }
 
     /** Manda a pessoa para a passarela de pagamento do sinal. */
-    public function pay(string $locale, string $token, PaymentGateway $gateway): RedirectResponse
+    public function pay(string $locale, string $token, PaymentGateway $gateway, SettlePayment $settle): RedirectResponse
     {
         $quote = $this->find($token);
         $payment = $this->pendingDeposit($quote);
 
         if ($payment === null) {
             return redirect()->route('quote.show', ['token' => $token]);
+        }
+
+        /*
+         * Antes de abrir uma sessao nova, perguntar pela anterior.
+         *
+         * Cada passagem por aqui SOBRESCREVE o `provider_reference`. Quem
+         * pagou no telemovel, fechou o separador e voltou ao link antes de o
+         * `payments:reconcile` correr via "pendente", carregava outra vez em
+         * Pagar — e a referencia do pagamento que ELA JA TINHA FEITO era
+         * apagada. A partir dai ninguem voltava a perguntar por ela: nem esta
+         * pagina, nem o reconcile. O dinheiro ficava na conta da Sol e
+         * invisivel para o sistema, que e exatamente o buraco que o
+         * `SettlePayment` existe para tapar.
+         *
+         * Perguntar primeiro custa uma chamada e fecha o caso mais comum.
+         */
+        if ($payment->provider_reference !== null && $settle->settleIfPaid($payment, $gateway)) {
+            return redirect()->route('quote.show', ['token' => $token])
+                ->with('payment_confirmed', true);
         }
 
         $session = $gateway->checkout(
@@ -104,21 +126,24 @@ final class QuoteController extends Controller
      * seria dar por pago qualquer um que escrevesse o endereço à mão.
      * Pergunta-se ao fornecedor.
      */
-    public function paid(string $locale, string $token, PaymentGateway $gateway): RedirectResponse
+    public function paid(string $locale, string $token, PaymentGateway $gateway, SettlePayment $settle): RedirectResponse
     {
         $quote = $this->find($token);
         $payment = $this->pendingDeposit($quote);
 
-        if ($payment?->provider_reference !== null && $gateway->confirm($payment->provider_reference)) {
-            $payment->update(['status' => PaymentStatus::Paid, 'paid_at' => now()]);
+        // Marcar, somar ao evento e mandar o recibo passou a viver no
+        // `SettlePayment`, numa transação — porque agora há um segundo
+        // caminho até aqui (`payments:reconcile`), e a mesma regra escrita
+        // em dois sítios é a mesma regra a divergir num deles.
+        if ($payment !== null && $settle->settleIfPaid($payment, $gateway)) {
+            return redirect()->route('quote.show', ['token' => $token])
+                ->with('payment_confirmed', true);
+        }
 
-            $quote->event->increment('paid_amount', (float) $payment->amount);
-
-            // Recibo do sinal. Só DEPOIS de a passarela confirmar — mandar
-            // um "recebemos o teu dinheiro" a quem só abriu o URL de
-            // retorno seria pior do que não mandar nada.
-            $this->notifier->depositReceived($payment->fresh());
-
+        // Já estar pago também traz aqui — e é bom que traga: quem paga,
+        // fecha o separador, e volta ao link depois de o `reconcile` ter
+        // corrido, tem de ver que está pago e não uma mensagem de espera.
+        if ($quote->event?->payments()->settled()->exists()) {
             return redirect()->route('quote.show', ['token' => $token])
                 ->with('payment_confirmed', true);
         }
@@ -136,11 +161,11 @@ final class QuoteController extends Controller
             ->firstOrFail();
     }
 
-    private function pendingDeposit(Quote $quote): ?\App\Models\Payment
+    private function pendingDeposit(Quote $quote): ?Payment
     {
         return $quote->event
             ?->payments()
-            ->where('kind', \App\Enums\PaymentKind::Deposit->value)
+            ->where('kind', PaymentKind::Deposit->value)
             ->where('status', PaymentStatus::Pending->value)
             ->latest()
             ->first();

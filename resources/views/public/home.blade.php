@@ -65,7 +65,11 @@
         @else
             <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach ($services->take(6) as $service)
-                    <a href="#contacto"
+                    {{-- O quadrado apontava para #contacto. Agora leva à
+                         página do serviço, que é onde está a descrição que
+                         a Sol escreveu; sem endereço nesse idioma, volta a
+                         apontar ao formulário em vez de a lado nenhum. --}}
+                    <a href="{{ $service->urlFor() ?? route('home', ['locale' => app()->getLocale()]).'#contacto' }}"
                        class="group relative block aspect-4/3 overflow-hidden rounded-card bg-surface-2 no-underline">
                         <x-photo
                             :name="data_get($service->seo, 'image', 'cumpleanos')"
@@ -162,12 +166,22 @@
 
             <div class="grid grid-cols-2 gap-2 md:grid-cols-4">
                 @foreach ($projects as $project)
-                    <a href="#trabajos" class="group relative block aspect-square overflow-hidden rounded-md bg-surface-2 no-underline">
-                        <x-photo
-                            :name="data_get($project->seo, 'image', 'mesa-dulce')"
-                            :alt="$project->title"
-                            class="h-full w-full object-cover transition duration-700 group-hover:scale-105"
-                        />
+                    {{-- Isto era um <a href="#trabajos">: um link para a
+                         própria secção onde já se estava. Agora abre o
+                         trabalho. --}}
+                    @php $url = $project->urlFor(); $cover = $project->coverUrl(); @endphp
+                    <a @if ($url) href="{{ $url }}" @endif
+                       class="group relative block aspect-square overflow-hidden rounded-md bg-surface-2 no-underline">
+                        @if ($cover)
+                            <img src="{{ $cover }}" alt="{{ $project->title }}" loading="lazy" decoding="async"
+                                 class="h-full w-full object-cover transition duration-700 group-hover:scale-105">
+                        @else
+                            <x-photo
+                                :name="data_get($project->seo, 'image', 'mesa-dulce')"
+                                :alt="$project->title"
+                                class="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                            />
+                        @endif
                         <span class="absolute bottom-2 left-2 rounded-full bg-surface px-3 py-1 text-[0.78rem] font-bold shadow-soft">
                             {{ $project->title }}
                         </span>
@@ -175,15 +189,25 @@
                 @endforeach
             </div>
 
-            @if ($b['instagram'])
-                <p class="mt-5">
+            {{-- "Ver todos" mandava a pessoa para o Instagram, ou seja,
+                 para fora do site. Agora leva à galeria — que é conteúdo
+                 nosso, indexável, e onde o passo seguinte é o formulário.
+                 O Instagram fica ao lado, que é o lugar dele. --}}
+            <p class="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2">
+                <a href="{{ route('projects.index', ['locale' => app()->getLocale()]) }}"
+                   class="inline-flex items-center gap-1.5 font-semibold text-rosa no-underline hover:underline">
+                    {{ __('site.projects.view_all') }}
+                    <x-ico name="arrow-right" class="w-4 h-4" />
+                </a>
+
+                @if ($b['instagram'])
                     <a href="https://instagram.com/{{ $b['instagram'] }}" rel="noopener"
-                       class="inline-flex items-center gap-1.5 font-semibold text-rosa no-underline hover:underline">
-                        {{ __('site.projects.view_all') }}
-                        <x-ico name="arrow-right" class="w-4 h-4" />
+                       class="inline-flex items-center gap-1.5 text-sm text-ink-3 no-underline hover:text-rosa">
+                        <x-ico name="instagram" class="w-4 h-4" />
+                        &#64;{{ $b['instagram'] }}
                     </a>
-                </p>
-            @endif
+                @endif
+            </p>
         </section>
     @endif
 

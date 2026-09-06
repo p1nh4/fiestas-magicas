@@ -47,4 +47,18 @@ return [
         'when' => 'O resto págase o día do evento.',
         'next' => 'Uns días antes escribímosche para pechar os últimos detalles: horas de montaxe, accesos e quen nos abre a porta.',
     ],
+    'reminder' => [
+        'subject' => 'Xa case: :event',
+        'preview' => 'Repasamos os últimos detalles.',
+        'body' => 'Quedan :days días. Escribímosche para repasar os últimos detalles e que non quede nada no aire.',
+        'when' => 'A festa empeza',
+        'setup' => 'Chegamos a montar',
+        'where' => 'Onde',
+        'pending' => 'Queda por pagar',
+        'ask_title' => 'Tres cousas que nos axudan moito a saber de antemán:',
+        'ask_access' => 'Como entramos? Hai que avisar a alguén, hai escaleiras, pódese aparcar preto?',
+        'ask_time' => 'A que hora podemos empezar a montar?',
+        'ask_contact' => 'Quen estará alí ese día, por se non te localizamos a ti?',
+        'wa' => 'Contestar por WhatsApp',
+    ],
 ];

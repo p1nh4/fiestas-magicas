@@ -5,6 +5,11 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Items\Schemas;
 
 use App\Enums\CategoryKind;
+use App\Models\Item;
+use App\Support\Availability\AvailabilityService;
+use App\Support\Period;
+use Carbon\CarbonImmutable;
+use Closure;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -44,6 +49,29 @@ class ItemForm
                             ->minValue(0)
                             ->required()
                             ->default(1)
+                            /*
+                             * O trigger `items_stock_guard` recusa baixar o
+                             * stock abaixo do que ja esta reservado, e este
+                             * era o unico caminho que nao passava pelo
+                             * AvailabilityService — o unico sitio que traduz
+                             * o 23514 para linguagem humana. Partiam-se dez
+                             * cadeiras, mudava-se 40 para 30, e o que
+                             * aparecia era SQLSTATE.
+                             */
+                            ->rule(fn (?Item $record) => function (string $attribute, $value, Closure $fail) use ($record) {
+                                if ($record === null) {
+                                    return;
+                                }
+
+                                $reservado = app(AvailabilityService::class)->peakDemand(
+                                    $record,
+                                    new Period(CarbonImmutable::now(), CarbonImmutable::now()->addYears(2)),
+                                );
+
+                                if ((int) $value < $reservado) {
+                                    $fail("Ahora mismo tienes {$reservado} reservadas para fiestas ya confirmadas. Para bajar de ahí, cancela antes esas reservas.");
+                                }
+                            })
                             ->helperText('Este número es el que impide reservar de más. No es decorativo.'),
                     ]),
 

@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Item;
 use App\Support\Availability\AvailabilityService;
+use App\Support\Locales;
 use App\Support\Period;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
@@ -49,8 +50,13 @@ final class RentalController extends Controller
             ->first();
 
         if ($item === null) {
-            throw new NotFoundHttpException();
+            throw new NotFoundHttpException;
         }
+
+        // Cada peça tem endereço próprio em cada idioma ("sillas-tiffany",
+        // "cadeiras-tiffany"). Trocar só o prefixo dava um 404 — e um
+        // hreflang que aponta a um 404 faz o Google descartar o grupo todo.
+        Locales::useAlternates(Locales::alternatesFor('rentals.show', $item));
 
         return view('public.rentals.show', [
             'item' => $item,

@@ -63,6 +63,10 @@ return [
         // no evento; isto e so para nao ter de escrever tudo de raiz.
         'default_start_hour' => (int) env('EVENT_DEFAULT_START_HOUR', 12),
         'default_hours' => (int) env('EVENT_DEFAULT_HOURS', 6),
+        // Quantos dias antes se manda o lembrete. Cinco dá tempo para
+        // resolver um problema de acessos sem ser ainda tão cedo que a
+        // pessoa se esqueça de responder.
+        'reminder_days' => (int) env('EVENT_REMINDER_DAYS', 5),
     ],
 
     'quote' => [

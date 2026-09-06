@@ -1,0 +1,21 @@
+[Unit]
+Description=Fiestas — túnel da Cloudflare
+After=network-online.target nginx.service
+Wants=network-online.target
+
+[Service]
+Type=notify
+ExecStart=/usr/bin/cloudflared --config /etc/cloudflared/config.yml --no-autoupdate tunnel run
+Restart=always
+RestartSec=5
+User=cloudflared
+Group=cloudflared
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadOnlyPaths=/etc/cloudflared
+
+[Install]
+WantedBy=multi-user.target

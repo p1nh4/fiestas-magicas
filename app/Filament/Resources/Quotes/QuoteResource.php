@@ -15,6 +15,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
 /**
@@ -32,7 +33,7 @@ class QuoteResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Trabajo';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 4;
 
     protected static ?string $modelLabel = 'presupuesto';
 
@@ -41,6 +42,17 @@ class QuoteResource extends Resource
     protected static ?string $navigationLabel = 'Presupuestos';
 
     /** Quantos estão em rascunho, ou seja, por enviar. */
+    /**
+     * Traz as relacoes que a tabela mostra, numa consulta so.
+     *
+     * A tabela mostra o nome da cliente e monta o link publico com o idioma
+     * do evento: sem isto sao tres consultas por linha.
+     */
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->with(['event.client']);
+    }
+
     public static function getNavigationBadge(): ?string
     {
         $drafts = static::getModel()::query()

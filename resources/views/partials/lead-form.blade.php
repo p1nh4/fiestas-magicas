@@ -1,10 +1,18 @@
 {{--
-    Formulário normal, com POST e recarregamento da página.
+    Formulário normal: POST, recarregamento da página, validação no
+    StoreLeadRequest.
 
-    Sem Livewire nem JavaScript de propósito: um formulário de contacto tem
-    de funcionar sempre, mesmo com a ligação má num salão de festas. O
-    Livewire entra na Fase 3, no calendário de disponibilidade, onde a
-    interatividade paga o custo.
+    Sem Livewire, e a decisão é deliberada. O Livewire está no projeto e é a
+    escolha certa onde está — o backoffice inteiro é Filament, que é Livewire
+    por baixo. Aqui não: com Livewire, submeter passa a depender de o JS ter
+    carregado, e a maior parte destas visitas chega pelo browser embutido do
+    Instagram, com ligação má. Um formulário que às vezes não submete perde
+    clientes; um que não valida à medida que se escreve só chateia.
+
+    O `resources/js/app.js` acrescenta a validação inline por cima disto, sem
+    tocar no caminho de submissão: se o JS não carregar, não se perde nada
+    além do conforto. Segurança não muda em nada — quem decide é sempre o
+    servidor.
 --}}
 
 @if ($errors->any())
@@ -18,7 +26,18 @@
     </div>
 @endif
 
-<form method="POST" action="{{ route('lead.store') }}" class="grid gap-4">
+{{-- As mensagens da validação inline (resources/js/app.js) saem daqui, do
+     lang/, e não do JavaScript: o site tem três idiomas e uma frase
+     escrita num .js só saberia um. Sem JS, este atributo não faz nada. --}}
+<form method="POST" action="{{ route('lead.store') }}" class="grid gap-4"
+      data-validacion="{{ json_encode([
+          'required' => __('forms.errors.required'),
+          'email_format' => __('forms.errors.email_format'),
+          'phone_format' => __('forms.errors.phone_format'),
+          'contact_required' => __('forms.errors.contact_required'),
+          'privacy' => __('forms.errors.privacy'),
+          'date_past' => __('forms.errors.date_past'),
+      ], JSON_UNESCAPED_UNICODE) }}">
     @csrf
 
     {{-- Armadilha para robots. Um humano nunca vê isto nem o preenche.

@@ -27,7 +27,7 @@ class Event extends Model
         'starts_at', 'ends_at', 'setup_starts_at', 'teardown_ends_at',
         'venue_name', 'venue_address', 'venue_city', 'distance_km', 'guests_count',
         'locale', 'notes', 'internal_notes',
-        'total_amount', 'deposit_amount', 'paid_amount',
+        'total_amount', 'deposit_amount', 'paid_amount', 'reminder_sent_at',
     ];
 
     protected function casts(): array
@@ -45,6 +45,7 @@ class Event extends Model
             'total_amount' => 'decimal:2',
             'deposit_amount' => 'decimal:2',
             'paid_amount' => 'decimal:2',
+            'reminder_sent_at' => 'immutable_datetime',
         ];
     }
 

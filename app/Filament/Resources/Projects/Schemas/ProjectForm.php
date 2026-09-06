@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Projects\Schemas;
 
 use App\Enums\EventType;
+use Closure;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -14,6 +16,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
 class ProjectForm
@@ -61,6 +64,35 @@ class ProjectForm
                             ->label('Destacado en la portada'),
                     ]),
 
+                /*
+                | As fotos.
+                |
+                | O portefólio existia no backoffice sem sítio nenhum para
+                | pôr uma foto — e numa empresa de decoração a foto não
+                | ilustra o trabalho: é o trabalho.
+                |
+                | A primeira da lista é a capa: é a que sai na grelha e a
+                | que aparece quando alguém partilha a página no WhatsApp.
+                | Por isso é reordenável — mudar a capa tem de ser arrastar,
+                | não voltar a carregar tudo.
+                */
+                Section::make('Fotos')
+                    ->description('La primera es la portada: es la que se ve en la lista y la que sale al compartir el enlace.')
+                    ->schema([
+                        FileUpload::make('photos')
+                            ->hiddenLabel()
+                            ->multiple()
+                            ->image()
+                            ->reorderable()
+                            ->appendFiles()
+                            ->openable()
+                            ->downloadable()
+                            ->disk('public')
+                            ->directory('trabajos')
+                            ->maxSize(8192)
+                            ->helperText('Hasta 8 MB por foto. Arrástralas para cambiar el orden.'),
+                    ]),
+
                 Tabs::make('Idiomas')
                     ->columnSpanFull()
                     ->tabs([
@@ -84,6 +116,7 @@ class ProjectForm
                     ->schema([
                         DateTimePicker::make('consent_at')
                             ->label('Nos dio permiso el')
+                            ->live(onBlur: true)
                             ->seconds(false)
                             ->displayFormat('d/m/Y H:i')
                             ->helperText('Vacío = no se puede publicar. La base de datos lo rechaza.'),
@@ -93,7 +126,20 @@ class ProjectForm
                             ->displayFormat('d/m/Y H:i')
                             ->default(now()),
                         Toggle::make('is_published')
-                            ->label('Visible en la web'),
+                            ->label('Visible en la web')
+                            /*
+                             * O CHECK `projects_publish_chk` recusa publicar
+                             * sem `consent_at`, e o `Project::canBePublished()`
+                             * ja existia — e nunca era chamado. Sem isto, a
+                             * Sol ligava o interruptor, gravava, e levava com
+                             * um ecra de erro a dizer SQLSTATE[23514]: nao
+                             * ficava a saber se gravou, nem porque nao.
+                             */
+                            ->rule(fn (Get $get) => function (string $attribute, $value, Closure $fail) use ($get) {
+                                if ($value && blank($get('consent_at'))) {
+                                    $fail('Para publicarlo necesitas guardar la fecha en que la clienta te dio permiso.');
+                                }
+                            }),
                     ]),
             ]);
     }

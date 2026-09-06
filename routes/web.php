@@ -6,9 +6,11 @@ use App\Http\Controllers\AreaController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\PageController;
-use App\Http\Controllers\RentalController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\QuoteController;
+use App\Http\Controllers\RentalController;
 use App\Http\Controllers\SeoController;
+use App\Http\Controllers\ServiceController;
 use App\Http\Middleware\SetLocale;
 use App\Support\Locales;
 use Illuminate\Http\Request;
@@ -70,6 +72,37 @@ Route::prefix('{locale}')
         Route::get('/alquiler/{slug}', [RentalController::class, 'show'])->name('rentals.show');
 
         /*
+        | Portefólio.
+        |
+        | O que a empresa vende vê-se, não se lê. Estas páginas são as fotos
+        | de festas reais, com o consentimento do cliente guardado na base
+        | de dados — sem ele o `CHECK` recusa publicar.
+        |
+        | O endereço de cada trabalho é diferente em cada idioma, como nas
+        | zonas e no aluguer, por isso resolve-se no controlador.
+        */
+        Route::get('/trabajos', [ProjectController::class, 'index'])->name('projects.index');
+        Route::get('/trabajos/{slug}', [ProjectController::class, 'show'])->name('projects.show');
+
+        /*
+        | Páginas de serviço.
+        |
+        | Não há lista: a portada já é a lista, e duas páginas com a mesma
+        | grelha de serviços seriam conteúdo duplicado a competir consigo
+        | próprio. O que faltava era o detalhe — é aqui que a descrição
+        | longa da Sol aparece, e é isto que responde a "mesa dulce
+        | comunión" em vez da portada, que é sobre tudo ao mesmo tempo.
+        */
+        // Sem esta linha, quem apagasse o fim do endereço na barra do
+        // navegador caía no apanha-tudo das páginas de texto e levava com
+        // um 404. A lista dos serviços é a portada.
+        Route::get('/servicios', fn (string $locale) => redirect()
+            ->away(route('home', ['locale' => $locale]).'#celebraciones', 301))
+            ->name('services.index');
+
+        Route::get('/servicios/{slug}', [ServiceController::class, 'show'])->name('services.show');
+
+        /*
         | Orçamento do cliente.
         |
         | Sem login: o token de 64 caracteres na URL é a credencial. Obrigar
@@ -81,7 +114,16 @@ Route::prefix('{locale}')
             ->whereAlphaNumeric('token')
             ->group(function () {
                 Route::get('/', [QuoteController::class, 'show'])->name('quote.show');
-                Route::get('/pagado', [QuoteController::class, 'paid'])->name('quote.paid');
+                /*
+                | A volta da passarela faz uma chamada ao fornecedor por
+                | pedido. Sem limite, quem tenha o link — ou um bot que siga
+                | o email — gera chamadas sem conta a Stripe. Nao corrompe
+                | estado nenhum; e custo e latencia a partir de uma URL
+                | publica, e por isso leva o mesmo travao que os POSTs.
+                */
+                Route::get('/pagado', [QuoteController::class, 'paid'])
+                    ->middleware('throttle:20,1')
+                    ->name('quote.paid');
 
                 Route::middleware('throttle:20,1')->group(function () {
                     Route::post('/aceptar', [QuoteController::class, 'accept'])->name('quote.accept');

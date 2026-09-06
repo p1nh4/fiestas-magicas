@@ -10,6 +10,7 @@ use App\Models\Item;
 use App\Models\Quote;
 use App\Models\QuoteLine;
 use App\Models\Service;
+use App\Support\Money;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -117,7 +118,7 @@ final class QuoteBuilder
             $base = '0.00';
         }
 
-        $tax = bcdiv(bcmul($base, (string) $quote->tax_rate, 4), '100', 2);
+        $tax = Money::percent($base, (string) $quote->tax_rate);
 
         $quote->update([
             'subtotal' => $subtotal,

@@ -2,7 +2,7 @@
 import pathlib
 import sys
 
-OUT = pathlib.Path('f7/lang')
+OUT = pathlib.Path('lang')
 
 R = {}
 

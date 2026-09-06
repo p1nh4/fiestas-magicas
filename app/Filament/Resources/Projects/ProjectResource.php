@@ -40,7 +40,7 @@ class ProjectResource extends Resource
 
     protected static ?string $pluralModelLabel = 'trabajos';
 
-    protected static ?string $navigationLabel = 'Trabajos';
+    protected static ?string $navigationLabel = 'Portfolio (web)';
 
     public static function form(Schema $schema): Schema
     {

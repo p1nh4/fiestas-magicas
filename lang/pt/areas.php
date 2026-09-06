@@ -28,6 +28,7 @@ return [
         'travel' => ':minutes minutos de caminho',
         'services_title' => 'O que montamos em :area',
         'projects_title' => 'Festas que montámos em :area',
+        'projects_all' => 'Ver todos os nossos trabalhos',
         'faq_title' => 'Perguntas frequentes',
         'cta_title' => 'Conta-nos a tua festa em :area',
         'back' => 'Ver todas as zonas',

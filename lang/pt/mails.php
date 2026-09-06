@@ -47,4 +47,18 @@ return [
         'when' => 'O resto paga-se no dia do evento.',
         'next' => 'Uns dias antes escrevemos para fechar os últimos pormenores: horas de montagem, acessos e quem nos abre a porta.',
     ],
+    'reminder' => [
+        'subject' => 'Está quase: :event',
+        'preview' => 'Vamos rever os últimos pormenores.',
+        'body' => 'Faltam :days dias. Escrevemos para rever os últimos pormenores e não ficar nada por combinar.',
+        'when' => 'A festa começa',
+        'setup' => 'Chegamos para montar',
+        'where' => 'Onde',
+        'pending' => 'Falta pagar',
+        'ask_title' => 'Três coisas que ajudam muito a saber de antemão:',
+        'ask_access' => 'Como entramos? É preciso avisar alguém, há escadas, dá para estacionar perto?',
+        'ask_time' => 'A que horas podemos começar a montar?',
+        'ask_contact' => 'Quem estará lá nesse dia, caso não te consigamos apanhar?',
+        'wa' => 'Responder por WhatsApp',
+    ],
 ];

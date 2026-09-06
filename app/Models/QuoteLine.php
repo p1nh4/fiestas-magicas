@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Support\Money;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -50,10 +51,11 @@ class QuoteLine extends Model
     /** bcmath e nao float: dinheiro nao se soma em virgula flutuante. */
     public function computeTotal(): string
     {
-        return bcmul(
-            bcmul((string) $this->quantity, (string) $this->unit_price, 4),
+        // Arredonda, não trunca: com quantidades fracionárias (a coluna é
+        // numeric(8,2)) 1,50 × 3,33 € dava 4,99 em vez de 5,00.
+        return Money::mul(
+            bcmul((string) $this->quantity, (string) $this->unit_price, 6),
             (string) max(1, (int) $this->days),
-            2
         );
     }
 }

@@ -13,6 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
 /**
@@ -43,6 +44,16 @@ class PaymentResource extends Resource
     protected static ?string $navigationLabel = 'Pagos';
 
     /** Quantos estão à espera de confirmação. */
+    /**
+     * Traz as relacoes que a tabela mostra, numa consulta so.
+     *
+     * A coluna mostra a referencia do evento.
+     */
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->with(['event']);
+    }
+
     public static function getNavigationBadge(): ?string
     {
         $pending = static::getModel()::query()

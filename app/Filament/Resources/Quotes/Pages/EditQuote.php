@@ -6,11 +6,34 @@ namespace App\Filament\Resources\Quotes\Pages;
 
 use App\Filament\Resources\Quotes\QuoteResource;
 use App\Support\Quotes\QuoteBuilder;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditQuote extends EditRecord
 {
     protected static string $resource = QuoteResource::class;
+
+    /**
+     * Apagar, mas so rascunhos.
+     *
+     * Nao havia forma nenhuma de apagar um orcamento. Dois cliques por
+     * engano no botao "Presupuesto" do evento deixavam duas versoes vazias
+     * para sempre, e o painel de entrada dizia "2 por enviar" todos os dias.
+     *
+     * Um orcamento ENVIADO continua a nao se apagar, e isso nao e um
+     * esquecimento: e a unica prova do que a cliente viu quando aceitou.
+     * Para esses cria-se a versao seguinte.
+     */
+    protected function getHeaderActions(): array
+    {
+        return [
+            DeleteAction::make()
+                ->label('Borrar borrador')
+                ->modalHeading('Borrar este borrador')
+                ->modalDescription('Solo se pueden borrar los borradores. Un presupuesto ya enviado se queda como prueba de lo que vio la clienta.')
+                ->visible(fn (): bool => $this->record->isEditable()),
+        ];
+    }
 
     /**
      * Os totais nunca vêm do formulário.

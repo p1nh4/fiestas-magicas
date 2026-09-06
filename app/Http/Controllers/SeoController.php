@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Models\Item;
+use App\Models\Project;
+use App\Models\Service;
 use App\Models\ServiceArea;
 use App\Support\Locales;
 use Illuminate\Http\Response;
@@ -60,6 +62,42 @@ final class SeoController extends Controller
             }
         }
 
+        // Portefólio.
+        $entries[] = [
+            'urls' => $this->urlsFor('projects.index'),
+            'changefreq' => 'weekly',
+            'priority' => '0.9',
+        ];
+
+        // Cada trabalho publicado. É a parte do sitemap que mais cresce, e
+        // a que mais vale: são páginas com fotos que só existem aqui.
+        foreach (Project::query()->published()->get() as $project) {
+            $urls = $this->translatedUrls('projects.show', $project, 'slug');
+
+            if ($urls !== []) {
+                $entries[] = [
+                    'urls' => $urls,
+                    'changefreq' => 'yearly',
+                    'priority' => '0.7',
+                    'lastmod' => $project->updated_at?->toAtomString(),
+                ];
+            }
+        }
+
+        // Páginas de serviço.
+        foreach (Service::query()->active()->orderBy('position')->get() as $service) {
+            $urls = $this->translatedUrls('services.show', $service, 'slug');
+
+            if ($urls !== []) {
+                $entries[] = [
+                    'urls' => $urls,
+                    'changefreq' => 'monthly',
+                    'priority' => '0.8',
+                    'lastmod' => $service->updated_at?->toAtomString(),
+                ];
+            }
+        }
+
         // Uma entrada por zona publicada. As que estão em rascunho não
         // entram: não têm página, e anunciá-las no sitemap seria mandar o
         // Google a um 404.
@@ -76,7 +114,7 @@ final class SeoController extends Controller
             }
         }
 
-        $xml = new \XMLWriter();
+        $xml = new \XMLWriter;
         $xml->openMemory();
         $xml->startDocument('1.0', 'UTF-8');
         $xml->startElement('urlset');

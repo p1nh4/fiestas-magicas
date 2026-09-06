@@ -7,7 +7,7 @@ Sol, e sem ele a zona nao se publica.
 import pathlib
 import sys
 
-OUT = pathlib.Path('f5/lang')
+OUT = pathlib.Path('lang')
 
 A = {}
 
@@ -29,6 +29,7 @@ A['es'] = {
         'travel': ':minutes minutos de camino',
         'services_title': 'Lo que montamos en :area',
         'projects_title': 'Fiestas que hemos montado en :area',
+        'projects_all': 'Ver todos nuestros trabajos',
         'faq_title': 'Preguntas frecuentes',
         'cta_title': 'Cuéntanos tu fiesta en :area',
         'back': 'Ver todas las zonas',
@@ -53,6 +54,7 @@ A['gl'] = {
         'travel': ':minutes minutos de camiño',
         'services_title': 'O que montamos en :area',
         'projects_title': 'Festas que montamos en :area',
+        'projects_all': 'Ver todos os nosos traballos',
         'faq_title': 'Preguntas frecuentes',
         'cta_title': 'Cóntanos a túa festa en :area',
         'back': 'Ver todas as zonas',
@@ -77,6 +79,7 @@ A['pt'] = {
         'travel': ':minutes minutos de caminho',
         'services_title': 'O que montamos em :area',
         'projects_title': 'Festas que montámos em :area',
+        'projects_all': 'Ver todos os nossos trabalhos',
         'faq_title': 'Perguntas frequentes',
         'cta_title': 'Conta-nos a tua festa em :area',
         'back': 'Ver todas as zonas',

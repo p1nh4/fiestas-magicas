@@ -1,0 +1,25 @@
+# Copiar para /etc/cloudflared/config.yml e trocar o UUID e o domínio.
+#
+# O UUID sai do `cloudflared tunnel create fiestas`, e o ficheiro de
+# credenciais também. Esse ficheiro é a chave do túnel: quem o tiver serve
+# tráfego neste domínio. chmod 600, e nunca no git.
+
+tunnel: UUID-DO-TUNEL
+credentials-file: /etc/cloudflared/UUID-DO-TUNEL.json
+
+# Sem isto, uma máquina que adormece deixa ligações mortas abertas do lado
+# da Cloudflare e as primeiras visitas depois de acordar apanham um 502.
+originRequest:
+  connectTimeout: 10s
+  keepAliveTimeout: 30s
+
+ingress:
+  - hostname: DOMINIO.TLD
+    service: http://127.0.0.1:8080
+
+  - hostname: www.DOMINIO.TLD
+    service: http://127.0.0.1:8080
+
+  # Obrigatório e tem de ser o último: o que não bater em nada acima.
+  # Sem esta regra o cloudflared recusa-se a arrancar.
+  - service: http_status:404

@@ -35,7 +35,7 @@ class ReservationResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Trabajo';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 7;
 
     protected static ?string $modelLabel = 'reserva';
 
@@ -53,7 +53,7 @@ class ReservationResource extends Resource
      */
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->orderByRaw('lower(period) asc');
+        return parent::getEloquentQuery()->with(['event', 'item'])->orderByRaw('lower(period) asc');
     }
 
     public static function form(Schema $schema): Schema

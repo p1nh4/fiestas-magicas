@@ -50,8 +50,15 @@
 
                 <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach ($services as $service)
-                        <li class="rounded-xl border border-line bg-ground p-5">
-                            <h3 class="text-step-0 font-medium">{{ $service->name }}</h3>
+                        @php $url = $service->urlFor(); @endphp
+                        <li class="relative rounded-xl border border-line bg-ground p-5 transition hover:border-rosa">
+                            <h3 class="text-step-0 font-medium">
+                                @if ($url)
+                                    <a href="{{ $url }}" class="no-underline after:absolute after:inset-0 hover:text-rosa">{{ $service->name }}</a>
+                                @else
+                                    {{ $service->name }}
+                                @endif
+                            </h3>
                             @if ($service->summary)
                                 <p class="mt-1.5 text-sm text-ink-2">{{ $service->summary }}</p>
                             @endif
@@ -67,16 +74,19 @@
             <div class="mx-auto max-w-5xl px-4 py-14 sm:px-6 md:py-20 lg:px-14">
                 <x-section-head :title="__('areas.show.projects_title', ['area' => $area->name])" />
 
-                <ul class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {{-- Isto era uma lista de títulos sem foto e sem
+                     destino: a prova de que o trabalho existia, sem o
+                     mostrar. Agora é a mesma grelha do portefólio. --}}
+                <div class="grid gap-x-5 gap-y-9 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach ($projects as $project)
-                        <li>
-                            <h3 class="text-step-0 font-medium">{{ $project->title }}</h3>
-                            @if ($project->venue)
-                                <p class="mt-1 text-sm text-ink-3">{{ $project->venue }}</p>
-                            @endif
-                        </li>
+                        <x-work-card :project="$project" />
                     @endforeach
-                </ul>
+                </div>
+
+                <p class="mt-8">
+                    <a href="{{ route('projects.index', ['locale' => app()->getLocale()]) }}"
+                       class="text-sm underline underline-offset-4 hover:text-rosa">{{ __('areas.show.projects_all') }}</a>
+                </p>
             </div>
         </section>
     @endif

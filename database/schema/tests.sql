@@ -264,6 +264,45 @@ SELECT t_ok($$
     VALUES ('Viana do Castelo', '{"es":"viana-do-castelo","gl":"viana-do-castelo","pt":"viana-do-castelo"}', 'PT', 55.0)
 $$, 'Z7 aceita uma zona no norte de Portugal');
 
+
+-- ---------------------------------------------------------------- desenhos
+-- Um desenho por festa, e cada peça uma vez só. As duas regras existem para
+-- evitar ambiguidade: dois desenhos concorrentes, ou a mesma peça listada
+-- duas vezes, são sempre um engano — e um engano que só se descobre no dia
+-- de carregar a carrinha.
+
+SELECT t_ok($$
+    INSERT INTO event_designs (event_id, theme, palette)
+    VALUES (1, 'Sirenas', '["#c96f86","#a8823c"]')
+$$, 'E1 aceita um desenho para uma festa');
+
+SELECT t_fails($$
+    INSERT INTO event_designs (event_id, theme) VALUES (1, 'Otro tema')
+$$, 'E2 recusa um segundo desenho para a mesma festa');
+
+SELECT t_ok($$
+    INSERT INTO event_design_items (design_id, item_id, quantity)
+    VALUES ((SELECT id FROM event_designs WHERE event_id = 1), 1, 40)
+$$, 'E3 aceita material no desenho');
+
+SELECT t_fails($$
+    INSERT INTO event_design_items (design_id, item_id, quantity)
+    VALUES ((SELECT id FROM event_designs WHERE event_id = 1), 1, 10)
+$$, 'E4 recusa a mesma peça duas vezes no mesmo desenho');
+
+SELECT t_fails($$
+    INSERT INTO event_design_items (design_id, item_id, quantity)
+    VALUES ((SELECT id FROM event_designs WHERE event_id = 1), 2, 0)
+$$, 'E5 recusa quantidade zero');
+
+-- O desenho é uma INTENÇÃO, não uma reserva: pôr material aqui não pode
+-- prender stock nenhum. Se um dia isto falhar, alguém ligou as duas coisas
+-- e passou a bloquear material por causa de ideias que ainda podem mudar.
+SELECT t_ok($$
+    INSERT INTO event_design_items (design_id, item_id, quantity)
+    VALUES ((SELECT id FROM event_designs WHERE event_id = 1), 2, 999)
+$$, 'E6 o desenho nao esta limitado pelo stock — nao e uma reserva');
+
 \echo ''
 \echo '================= RESULTADO ================='
 SELECT rpad(label, 62, ' ') AS teste,

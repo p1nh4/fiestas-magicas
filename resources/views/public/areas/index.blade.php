@@ -20,6 +20,10 @@
         @if ($published->isNotEmpty())
             <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach ($published as $area)
+                    {{-- Sem slug nao ha endereco, e um link que nao vai a
+                         lado nenhum nao se escreve: fica o cartao sem
+                         ligacao, como no resto do site. --}}
+                    @continue (blank($area->slug))
                     <li>
                         <a href="{{ route('areas.show', ['locale' => app()->getLocale(), 'slug' => $area->slug]) }}"
                            class="group flex h-full flex-col gap-1.5 rounded-xl border border-line bg-white/60 p-5 transition hover:border-oro hover:shadow-sm">

@@ -15,6 +15,8 @@ return [
     ],
     'nav' => [
         'celebrations' => 'Celebracións',
+        'works' => 'Traballos',
+        'areas' => 'Zonas',
         'about' => 'Quen somos',
         'process' => 'Como traballamos',
         'rental' => 'Alugueiro',

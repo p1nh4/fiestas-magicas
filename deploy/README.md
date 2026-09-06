@@ -1,5 +1,9 @@
 # Pôr o site no ar
 
+> Numa máquina **sem IP público** — o WSL2 do portátil, um mini-PC em
+> casa, um Raspberry Pi — é o `casa.md` que se segue. Túnel da
+> Cloudflare em vez de IP fixo; o resto é quase tudo igual.
+
 Um servidor Debian atrás da Cloudflare. Sem serviços pagos, sem Docker, sem
 nada que precise de subscrição. Tudo o que está aqui é legível com `cat` —
 essa é a ideia: se não se consegue auditar, não se consegue confiar.

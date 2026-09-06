@@ -8,6 +8,7 @@ use App\Models\Faq;
 use App\Models\Project;
 use App\Models\Service;
 use App\Models\ServiceArea;
+use App\Support\Locales;
 use Illuminate\Contracts\View\View;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -44,8 +45,13 @@ final class AreaController extends Controller
             // 404 e não redirecionamento para a lista: uma zona por publicar
             // não tem página, e responder 200 com outra coisa qualquer é a
             // receita para o Google indexar lixo.
-            throw new NotFoundHttpException();
+            throw new NotFoundHttpException;
         }
+
+        // O endereço da zona muda com o idioma. Sem esta linha, o hreflang
+        // e o seletor de idioma trocavam só o prefixo e mandavam a pessoa
+        // (e o Google) para uma página que não existe.
+        Locales::useAlternates(Locales::alternatesFor('areas.show', $area));
 
         return view('public.areas.show', [
             'area' => $area,

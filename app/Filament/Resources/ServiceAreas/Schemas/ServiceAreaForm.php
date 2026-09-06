@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Filament\Resources\ServiceAreas\Schemas;
 
 use App\Models\ServiceArea;
+use Closure;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
 class ServiceAreaForm
@@ -67,6 +69,21 @@ class ServiceAreaForm
                     ->schema([
                         Toggle::make('is_published')
                             ->label('Página visible en la web')
+                            /*
+                             * O CHECK `service_areas_intro_chk` recusa, e o
+                             * `ServiceArea::isPublishable()` ja existia sem
+                             * ninguem o chamar. Explicar antes vale mais do
+                             * que a mensagem do Postgres depois — mas quem
+                             * decide continua a ser o Postgres.
+                             */
+                            ->rule(fn (Get $get) => function (string $attribute, $value, Closure $fail) use ($get) {
+                                $escrito = mb_strlen(trim((string) $get('intro.es')));
+
+                                if ($value && $escrito < ServiceArea::MIN_INTRO) {
+                                    $faltam = ServiceArea::MIN_INTRO - $escrito;
+                                    $fail("Te faltan {$faltam} caracteres de texto en español para poder publicarla.");
+                                }
+                            })
                             // O aviso e o mesmo numero do CHECK na base de
                             // dados. Explicar antes vale mais do que a
                             // mensagem de erro do Postgres depois — mas e o
@@ -87,6 +104,7 @@ class ServiceAreaForm
                 Textarea::make("intro.{$locale}")
                     ->label('Texto de la página')
                     ->rows(10)
+                    ->live(onBlur: true)
                     ->required($required)
                     ->helperText('Separa los párrafos con una línea en blanco.'),
                 TextInput::make("slug.{$locale}")

@@ -12,7 +12,7 @@
                 <h4 class="mb-2 text-[0.74rem] font-bold uppercase tracking-[0.16em] text-ink">{{ __('site.footer.celebrations') }}</h4>
                 <ul class="grid gap-1 list-none p-0 m-0">
                     @foreach (['cumpleanos', 'bautizo', 'comunion', 'boda'] as $type)
-                        <li><a href="#celebraciones" class="no-underline hover:text-rosa">{{ \App\Enums\EventType::from($type)->label() }}</a></li>
+                        <li><a href="{{ route('home', ['locale' => app()->getLocale()]) }}#celebraciones" class="no-underline hover:text-rosa">{{ \App\Enums\EventType::from($type)->label() }}</a></li>
                     @endforeach
                 </ul>
             </div>

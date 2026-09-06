@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Support\Mail;
 
 use App\Mail\DepositReceivedMail;
+use App\Mail\EventReminderMail;
 use App\Mail\LeadAlertMail;
 use App\Mail\LeadReceivedMail;
 use App\Mail\QuoteReadyMail;
+use App\Models\Event;
 use App\Models\Lead;
 use App\Models\Payment;
 use App\Models\Quote;
@@ -91,6 +93,24 @@ final class Notifier
             fn () => Mail::to($client->email)->locale($locale)->send(new DepositReceivedMail($payment)),
             'recibo do sinal',
             ['payment' => $payment->id],
+        );
+    }
+
+    /** O lembrete dos dias antes, no idioma do evento. */
+    public function eventReminder(Event $event): void
+    {
+        $client = $event->client;
+
+        if ($client === null || blank($client->email)) {
+            return;
+        }
+
+        $locale = $event->locale?->value ?? config('app.locale');
+
+        $this->send(
+            fn () => Mail::to($client->email)->locale($locale)->send(new EventReminderMail($event)),
+            'lembrete de festa',
+            ['event' => $event->id],
         );
     }
 
