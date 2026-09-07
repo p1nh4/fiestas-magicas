@@ -29,11 +29,18 @@
        O rosa do logótipo é claro demais para texto: em #E9B7C3 sobre branco
        o contraste fica em 1.7:1, muito abaixo do mínimo de 4.5:1 das WCAG.
        Por isso o rosa claro fica para superfícies e este, escurecido, para
-       texto e botões. */
-    --color-rosa: #c96f86;
-    --color-rosa-deep: #a9536a;
-    --color-rosa-soft: #f4dbe1;
-    --color-rosa-wash: #fcf1f3;
+       texto e botões.
+
+       Alinhado com o cartão de visita/flyer atual (o rosa forte do título
+       "Fiestas Mágicas", amostrado da própria imagem): mais vívido do que
+       o tom antigo e, de bónus, corrige um contraste que já estava abaixo
+       do mínimo — o #c96f86 anterior dava 3.44:1 sobre branco (usado em
+       texto normal no rodapé, telefone/WhatsApp, links), abaixo dos 4.5:1
+       exigidos; este dá 5.16:1. */
+    --color-rosa: #c83358;
+    --color-rosa-deep: #a02646;
+    --color-rosa-soft: #f6dde1;
+    --color-rosa-wash: #fdf0ec;
 
     /* --- dourado --- */
     --color-oro: #a8823c;
