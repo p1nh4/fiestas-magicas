@@ -45,17 +45,15 @@ final class SecurityHeaders
             );
         }
 
-        // CSP em modo Report-Only: nunca bloqueia nada, só avisa na consola
-        // do navegador (DevTools > Console/Issues) o que a política teria
-        // recusado. É o passo intermédio que faltava — o painel /admin usa
-        // Livewire e Alpine, que precisam de 'unsafe-inline'/'unsafe-eval'
-        // para correr, e uma CSP a bloquear de vez sem isso testado primeiro
-        // parte o backoffice em silêncio. Corre em todos os pedidos (não só
-        // produção) para já dar sinal em local; o passo seguinte é abrir o
-        // site e o /admin, ver a consola, apertar o que sobrar sem uso real,
-        // e só então trocar para 'Content-Security-Policy' a sério.
+        // CSP a bloquear de vez. Passou primeiro por Report-Only: testado o
+        // site público e o /admin (Livewire + Alpine incluídos) com consola
+        // aberta, zero violações reais — só um pedido externo de avatar
+        // (ui-avatars.com) que o 'img-src https:' já cobre. Por isso os
+        // valores ficam largos onde o admin precisa ('unsafe-inline' e
+        // 'unsafe-eval' para Livewire/Alpine); apertar mais isso é trabalho
+        // para depois, com nonces, não bloquear às cegas agora.
         $response->headers->set(
-            'Content-Security-Policy-Report-Only',
+            'Content-Security-Policy',
             implode('; ', [
                 "default-src 'self'",
                 "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
