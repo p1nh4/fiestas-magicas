@@ -31,9 +31,14 @@ final class SecurityHeaders
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
         // Nada no site precisa de câmara, microfone ou localização.
+        //
+        // 'interest-cohort' ficou do FLoC (o "substituto" do Google para
+        // cookies de terceiros); o Chrome matou o FLoC em 2022 e já nem
+        // reconhece a feature — só ficava a poluir a consola com um aviso
+        // sem função nenhuma.
         $response->headers->set(
             'Permissions-Policy',
-            'camera=(), microphone=(), geolocation=(), interest-cohort=()'
+            'camera=(), microphone=(), geolocation=()'
         );
 
         // HSTS só em produção e só sobre HTTPS: ativá-lo em local prende o
