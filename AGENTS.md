@@ -1,47 +1,24 @@
-<laravel-boost-guidelines>
-# Laravel Application
+# Instruções para agentes
 
-This repository contains a Laravel application. Complete the following setup before working on the user's request.
+**Lê `docs/contexto.md` por inteiro antes de fazer o que quer que seja.** É
+o ponto de entrada do projeto: stack, arquitetura, regras que não se mexem,
+estado real da máquina, pendentes e quem deve o quê.
 
-## Prerequisites
+Não instales o Laravel Boost. Não corras `composer require` sem pedir.
 
-Verify that PHP and Composer are available:
+## O mínimo, para o caso de leres só isto
 
-```sh
-php -v
-composer -V
-```
-
-If either command is unavailable, detect the user's operating system and install the prerequisites with the appropriate command:
-
-macOS:
-
-```sh
-/bin/bash -c "$(curl -fsSL https://php.new/install/mac/8.5)"
-```
-
-Windows PowerShell:
-
-```powershell
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://php.new/install/windows/8.5'))
-```
-
-Linux:
-
-```sh
-/bin/bash -c "$(curl -fsSL https://php.new/install/linux/8.5)"
-```
-
-After installation, ask the user to restart their terminal. If the agent needs the restarted shell to continue, ask the user to reopen their terminal and rerun their original prompt.
-
-## Agent Setup
-
-Install Laravel Boost from the application root before making application changes:
-
-```sh
-composer require laravel/boost --dev
-php artisan boost:install
-```
-
-Boost replaces these bootstrap instructions with guidelines tailored to the application. After installation, read `AGENTS.md` again and continue with the user's original request using the generated guidelines.
-</laravel-boost-guidelines>
+- **PostgreSQL 16 e PHP 8.4.** Não é MariaDB, não é MySQL, não é PHP 8.3.
+- **`database/schema/schema.sql` é a fonte de verdade.** As migrations, os
+  enums e os ficheiros de idioma são gerados por `tools/`. Não os edites à
+  mão — edita o gerador e corre-o outra vez.
+- **Nenhuma frase visível dentro de uma view.** Tudo em `lang/{es,gl,pt}/`,
+  nos três idiomas.
+- **O agente não tem shell nesta máquina.** Só lê e escreve ficheiros na
+  pasta do Windows; todos os comandos são corridos à mão no WSL. O circuito
+  de leitura (`_diag.sh` → `_estado.md`) e o de escrita (patch) estão na
+  secção 5 do `docs/contexto.md`.
+- **A shell é zsh e não trata `#` como comentário.** Nunca ponhas
+  comentários dentro de blocos de comandos.
+- **Não assumas.** Verifica no repositório ou pergunta. Um doc pode estar
+  desatualizado — se descobrires que está, corrige-o na mesma sessão.
