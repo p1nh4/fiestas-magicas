@@ -6,7 +6,7 @@ se esquecer do enum, isto apanha.
 """
 import re, pathlib
 
-SRC = 'schema.sql'
+SRC = 'database/schema/schema.sql'
 OUT = pathlib.Path('build/app/Enums')
 
 # constraint no schema -> (classe PHP, chave de traducao)

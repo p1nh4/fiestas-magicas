@@ -41,13 +41,13 @@ T = {
   'payment_kind': {'deposit': 'Sinal', 'balance': 'Resto', 'extra': 'Extra', 'refund': 'Devolución'},
   'payment_method': {'card': 'Tarxeta', 'bizum': 'Bizum', 'transfer': 'Transferencia',
                      'cash': 'Efectivo', 'other': 'Outro'},
-  'payment_status': {'pending': 'Pendente', 'paid': 'Pagado', 'failed': 'Fallado', 'refunded': 'Devolto'},
+  'payment_status': {'pending': 'Pendente', 'paid': 'Pagado', 'failed': 'Fallido', 'refunded': 'Devolto'},
   'document_type': {'quote': 'Orzamento', 'proforma': 'Proforma', 'receipt': 'Recibo',
                     'invoice': 'Factura', 'credit_note': 'Abono'},
   'price_mode': {'fixed': 'Prezo fixo', 'per_guest': 'Por convidado', 'per_hour': 'Por hora',
                  'quote': 'A orzamentar'},
   'category_kind': {'service': 'Servizo', 'item': 'Material'},
-  'locale': {'es': 'Español', 'gl': 'Galego', 'pt': 'Portugués'},
+  'locale': {'es': 'Castelán', 'gl': 'Galego', 'pt': 'Portugués'},
   'event_type': {'cumpleanos': 'Aniversario', 'cumpleanos_infantil': 'Aniversario infantil',
                  'bautizo': 'Bautizo', 'comunion': 'Comuñón', 'boda': 'Voda',
                  'baby_shower': 'Baby shower', 'empresa': 'Evento de empresa', 'otro': 'Outro'},
@@ -79,23 +79,23 @@ T = {
 
 AVAILABILITY = {
  'es': {
-   'out_of_stock': ('No queda ninguno disponible de «:item» en esas fechas.'
-                    '|Solo queda 1 unidad de «:item» y pediste :requested.'
-                    '|Solo quedan :available unidades de «:item» y pediste :requested.'),
+   'out_of_stock': ('{0}No queda ninguno disponible de «:item» en esas fechas.'
+                    '|{1}Solo queda 1 unidad de «:item» y pediste :requested.'
+                    '|[2,*]Solo quedan :available unidades de «:item» y pediste :requested.'),
    'available': '{0}Agotado|{1}Queda 1|[2,*]Quedan :count',
    'unit_day': ':price € / día',
  },
  'gl': {
-   'out_of_stock': ('Non queda ningún dispoñible de «:item» nesas datas.'
-                    '|Só queda 1 unidade de «:item» e pediches :requested.'
-                    '|Só quedan :available unidades de «:item» e pediches :requested.'),
+   'out_of_stock': ('{0}Non queda ningún dispoñible de «:item» nesas datas.'
+                    '|{1}Só queda 1 unidade de «:item» e pediches :requested.'
+                    '|[2,*]Só quedan :available unidades de «:item» e pediches :requested.'),
    'available': '{0}Esgotado|{1}Queda 1|[2,*]Quedan :count',
    'unit_day': ':price € / día',
  },
  'pt': {
-   'out_of_stock': ('Não há nenhum disponível de «:item» nessas datas.'
-                    '|Só resta 1 unidade de «:item» e pediste :requested.'
-                    '|Só restam :available unidades de «:item» e pediste :requested.'),
+   'out_of_stock': ('{0}Não há nenhum disponível de «:item» nessas datas.'
+                    '|{1}Só resta 1 unidade de «:item» e pediste :requested.'
+                    '|[2,*]Só restam :available unidades de «:item» e pediste :requested.'),
    'available': '{0}Esgotado|{1}Resta 1|[2,*]Restam :count',
    'unit_day': ':price € / dia',
  },

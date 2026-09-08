@@ -56,7 +56,7 @@ return [
     'payment_status' => [
         'pending' => 'Pendente',
         'paid' => 'Pagado',
-        'failed' => 'Fallado',
+        'failed' => 'Fallido',
         'refunded' => 'Devolto',
     ],
     'document_type' => [
@@ -77,7 +77,7 @@ return [
         'item' => 'Material',
     ],
     'locale' => [
-        'es' => 'Español',
+        'es' => 'Castelán',
         'gl' => 'Galego',
         'pt' => 'Portugués',
     ],

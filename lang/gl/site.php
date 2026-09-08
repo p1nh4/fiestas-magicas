@@ -19,7 +19,7 @@ return [
         'areas' => 'Zonas',
         'about' => 'Quen somos',
         'process' => 'Como traballamos',
-        'rental' => 'Alugueiro',
+        'rental' => 'Aluguer',
         'contact' => 'Contacto',
         'skip' => 'Ir ao contido',
         'main' => 'Navegación principal',
@@ -82,7 +82,7 @@ return [
         'lead' => 'Algunhas pezas pódense alugar soltas por días. Consulta a dispoñibilidade da túa data e resérvao.',
         'per_day' => ':price / día',
         'cta' => 'Consultar dispoñibilidade',
-        'empty' => 'Estamos a preparar o catálogo de alugueiro.',
+        'empty' => 'Estamos a preparar o catálogo de aluguer.',
     ],
     'testimonials' => [
         'kicker' => 'O que din',
